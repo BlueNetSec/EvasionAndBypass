@@ -1,3 +1,5 @@
-**HTML5 anchor tag**
+**HTML Smuggling**
 
-instructs the browser to automatically download a file when a user clicks on the hyperlink [html file](/ClientSide/html)
+Method 1: instructs the browser to automatically download a file when a user clicks on the hyperlink [method 1html file](/ClientSide/html) Method 1 works fine, but filename and extension of the dropper are exposed.
+
+Method 2: a) **First**, Let's create a based64 payload and store it as [Blob Object](https://developer.mozilla.org/en-US/docs/Web/API/Blob), a javascript data type-file-like object of immutable, raw data; they can be read as text or binary data.  We can store the base64 payload inside of the Blob variable. **Second** use the Blob to create URL file obejct that simulates file on web server. **Last** create invisible anchor tag to trigger download actiopn when page loaded.
