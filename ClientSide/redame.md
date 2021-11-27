@@ -9,7 +9,7 @@ Method 3: To Do, modify the Method2 ttp to use **window.navigator.msSaveBlob**, 
 
 **Phishing with Microsoft Office**
 
-Method 1 warm up: lanuch cmd with VBS marco, with vbHide and shell option.[link](ClientSide/method1cmd.vbs)
+Method 1 warm up: lanuch cmd with VBS marco, with vbHide and shell option.[link](/ClientSide/method1cmd.vbs)
 
-Method 2 warm up: lanuch cmd with CreateObject WSH shell.[link](ClientSide/method2cmd.vbs)
+Method 2 warm up: lanuch cmd with CreateObject WSH shell.[link](/ClientSide/method2cmd.vbs)
 
