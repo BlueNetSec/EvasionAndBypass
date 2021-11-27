@@ -6,3 +6,10 @@ Method 2: a) **First**, Let's create a based64 payload and store it as [Blob Obj
 
 Method 3: To Do, modify the Method2 ttp to use **window.navigator.msSaveBlob**, so this hosting works IE and Edge.
 
+
+**Phishing with Microsoft Office**
+
+Method 1 warm up: lanuch cmd with VBS marco, with vbHide and shell option.[link](ClientSide/method1cmd.vbs)
+
+Method 2 warm up: lanuch cmd with CreateObject WSH shell.[link](ClientSide/method2cmd.vbs)
+
