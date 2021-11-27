@@ -13,3 +13,5 @@ Method 1 warm up: lanuch cmd with VBS marco, with vbHide and shell option.[link]
 
 Method 2 warm up: lanuch cmd with CreateObject WSH shell.[link](/ClientSide/method2cmd.vbs)
 
+page 48 tbc
+
