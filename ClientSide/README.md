@@ -40,3 +40,21 @@ Summary: PowerShell cannoy natively inteact with Win32APIs, but we can use c# in
 Method 1: Add-Type TTPs, Create a powershell variable and set it to a block of text. Inside that text, we use C# sytnx to import the desired APIs, finally we use **Add-Type** to compile the C# code contained in the decleared variable.
 - Create the [powershell memory shell code runner](/ClientSide/memoryShellCodeRunner.ps1)
 - Create the [VBA Marco Script](/ClientSide/powershellmemorydownloadCradle.vbs) for target to downaload the powershell code into memory and execute
+
+Notes on Method 1: Add-Type Compilation, the Add-Type method 1 use the .NET framework to compile C# code. This process is performed by Visual C# command line compiler **csc**. During this process both C# soruce code along and the compilred C# assesmbly are temporarily written to disk.
+- Investigating the powershell Add-Type keyword steps
+- 1.Use Process Monitor to filter **powershell_ise.exe** process , clear the old events with Ctrl+X
+- 2.Run the add type powershell ISE
+- 3.Process Monitor lists many eventsincluding CreateFile, WriteFile, and CloseFile operations including rtylilrr.0.cs and rtylilrr.dll
+- 4.file extensions suggest that both the C# source code and the compiled code have been written to the hard drive
+- 5.If suspicion is correct, then the rtylilrr.dll assembly should be loaded into the PowerShell ISE process
+- 6.list loaded assemblies using the GetAssemblies method on the CurrentDomain object
+```
+C:\Windows\SysWOW64\WindowsPowerShell\v1.0> [appdomain]::currentdomain.getassemblies() | Sort-Object -Property fullname | Format-Table fullname
+....
+....
+qdrje0cy, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+r1b1e3au, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+rtylilrr, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
+```
+- 7.investigation reveals that PowerShell writes a C# source code file (.cs) to the hard drive, which is compiled into an assembly (.dll) and then loaded into the process. Add-Type code will likely be flagged by endpoint antivirus
