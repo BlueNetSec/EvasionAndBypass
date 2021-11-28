@@ -1,4 +1,4 @@
-**HTML Smuggling**
+## HTML Smuggling
 
 Method 1: instructs the browser to automatically download a file when a user clicks on the hyperlink [method 1html file](/ClientSide/html) Method 1 works fine, but filename and extension of the dropper are exposed.
 
@@ -7,7 +7,7 @@ Method 2: a) **First**, Let's create a based64 payload and store it as [Blob Obj
 Method 3: To Do, modify the Method2 ttp to use **window.navigator.msSaveBlob**, so this hosting works IE and Edge.
 
 
-**Phishing with Microsoft Office**
+## Phishing with Microsoft Office
 
 Method 1 warm up: lanuch cmd with VBS marco, with vbHide and shell option.[link](/ClientSide/method1cmd.vbs)
 
@@ -18,7 +18,7 @@ Method 3 : use powershell download method in vbs script, use a custom wait funct
 Method 4: To Do, user Invoke-WebRequest method(page 51)
 
 
-**Keep up Appearances**
+## Keep up Appearances
 
 Method 1: Switcheroo, make user believe that the content is encrypted, the user has to click on enable to see decrypted content.
 - Create decrypted text and select them all
@@ -28,9 +28,11 @@ Method 1: Switcheroo, make user believe that the content is encrypted, the user 
 
 Method 2: TO DO, Create a Marco that use both swithceroo and execute a payload. (page 58)
 
-Method 3(run VBA shellcode in memory): Calling Win32APIs from VBA, useing 3 windows 32 APIs from kernel32.dll VirtualAlloc, RtlMoveMemory,and CreateThread.
+Method 3: (run VBA shellcode in memory): Calling Win32APIs from VBA, useing 3 windows 32 APIs from kernel32.dll VirtualAlloc, RtlMoveMemory,and CreateThread.
 - VirtualAlloc, allocate unmanaged memory that is writable, readable, and executable.
 - RtlMoveMemory, copy shell code into memory space
 - CreateThread, execute the shellcode
 - [VBA memory shellcode runner](/ClientSide/method3vbamemoryshellcode.vbs)
+
+
 
