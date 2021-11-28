@@ -28,3 +28,9 @@ Method 1: Switcheroo, make user believe that the content is encrypted, the user 
 
 Method 2: TO DO, Create a Marco that use both swithceroo and execute a payload. (page 58)
 
+Method 3: Calling Win32APIs from VBA, useing 3 windows 32 APIs from kernel32.dll VirtualAlloc, RtlMoveMemory,and CreateThread.
+- VirtualAlloc, allocate unmanaged memory that is writable, readable, and executable.
+- RtlMoveMemory, copy shell code into memory space
+- CreateThread, execute the shellcode
+- page 61 
+
