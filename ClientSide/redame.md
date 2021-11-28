@@ -13,5 +13,18 @@ Method 1 warm up: lanuch cmd with VBS marco, with vbHide and shell option.[link]
 
 Method 2 warm up: lanuch cmd with CreateObject WSH shell.[link](/ClientSide/method2cmd.vbs)
 
-page 48 tbc
+Method 3 : use powershell download method in vbs script, use a custom wait function to wait the download to finish, and then execute downloaded binary(ActiveDocument.Path->return the current path of the world documents)[vbs dowanload marco](/ClientSide/method3powershell.vbs)
+
+Method 4: To Do, user Invoke-WebRequest method(page 51)
+
+
+**Keep up Appearances**
+
+Method 1: Switcheroo, make user believe that the content is encrypted, the user has to click on enable to see decrypted content.
+- Create decrypted text and select them all
+- Insert > Quick Parts > AutoTexts and Save Selection to AutoText Gallery: (In the Create New Building Block dialog box, remember the **Name** )
+- Remove the decrypted messages and insert encrypted text in the word document
+- Create the [marco](/ClientSide/Switcheroo.vbs) that will delete the encrypted text and replace it with decrypted text
+
+Method 2: TO DO, Create a Marco that use both swithceroo and execute a payload. (page 58)
 
