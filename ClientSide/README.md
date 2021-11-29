@@ -58,3 +58,10 @@ r1b1e3au, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 rtylilrr, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null
 ```
 - 7.investigation reveals that PowerShell writes a C# source code file (.cs) to the hard drive, which is compiled into an assembly (.dll) and then loaded into the process. Add-Type code will likely be flagged by endpoint antivirus
+
+## Improved shellcode runner with dynamic lookup(Microsoft.Win32.UnsafeNativeMethods -> GetModuleHandle and GetProcAddress)
+Summary: We want to create .NET assembly in memory instead of writitng code and compiling it. Since We can't create any new assemblies, we need to locate exisitng assembiles that we can reuse. 
+
+**GetModuleHandle** obtains a handle to the specified DLL(the memory address of the DLL). We can then pass the DLL handle and the function name to **GetProcAddress**, which will return the function address. We can uses these two fucntions to locate any API, but we must invoke them without using Add-Type.
+- 1.We will use this [parseLoadedAssemblies script](/ClientSide/parseLoadedAssemblies.ps1) to search assemblies that contain both GetModuleHandle and GetProcAddress
+- 2.Now We identify the GetProcAddress and GetModuleHandle in **UnsafeNativeMethods**, let's search which dll module contains UnsafeNativeMethods with [Search dll script](/ClientSide/IdentifyAssemblies.ps1).
