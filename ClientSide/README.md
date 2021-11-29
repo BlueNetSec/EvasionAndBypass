@@ -67,4 +67,4 @@ Summary: We want to create .NET assembly in memory instead of writitng code and 
 - 2.Now We identify the GetProcAddress and GetModuleHandle in **UnsafeNativeMethods**, let's search which dll module contains UnsafeNativeMethods with [Search dll script](/ClientSide/IdentifyAssemblies.ps1).
 - 3.However, these functions are only meant to be used internally by the .NET, we need to obtain a erference of these functions to use them in powershell using **GetType** method. The reference to the **System.dll** will allow us to subsequently locate the GetModuleHandle and GetProcAddress methods inside it. Consider the following example code for [MessageBox method](/ClientSide/messageBoxMemoryExample.ps1)
 - 4.Let's rewrite the message box example to a function, aka[LookupFunc](/ClientSide/LookupFunc.ps1) so we can import it anywhere.
-- 
+- 5.Now we can get address of any function, let's manually create an message box assembly in memory and populate it with content, aka [full Delegate message box code]().This is an example of ReflectedDelegate attack. Note: In the Microsoft .NET framework, an assembly is a partially compiled code library could be dll or exe.
