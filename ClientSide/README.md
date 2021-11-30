@@ -68,5 +68,14 @@ Summary: We want to create .NET assembly in memory instead of writitng code and 
 - 3.However, these functions are only meant to be used internally by the .NET, we need to obtain a erference of these functions to use them in powershell using **GetType** method. The reference to the **System.dll** will allow us to subsequently locate the GetModuleHandle and GetProcAddress methods inside it. Consider the following example code for [MessageBox method](/ClientSide/messageBoxMemoryExample.ps1)
 - 4.Let's rewrite the message box example to a function, aka[LookupFunc](/ClientSide/LookupFunc.ps1) so we can import it anywhere.
 - 5.Now we can get address of any function, let's manually create an message box assembly in memory and populate it with content, aka [full Delegate message box code](/ClientSide/messageBoxMemoryCompleted.ps1).This is an example of ReflectedDelegate attack. Note: In the Microsoft .NET framework, an assembly is a partially compiled code library could be dll or exe.
-- 6.Now we can create a [reflected shell code runner](/ClientSide/ReflectedShellCodeRunner.ps1) by constructing our own dll in memory, we will need to create virtualAlloc, CreateThread, and
-WaitForSingleObject.
+- 6.Now we can create a [reflected shell code runner](/ClientSide/ReflectedShellCodeRunner.ps1) by constructing our own dll in memory, we will need to create virtualAlloc, CreateThread, and WaitForSingleObject.
+- 7.TO DO, the reflected shell code runner was based on 32-bit PowerShell Process. Modify the code so it works on 64-bit PowerShell Porcess.(pg 94)
+
+## Powershell Script Web Hosting with Proxy 
+Summary, the powershell ```Net.WebClient``` download cradle is proxy-aware. The proxy setting used by Net.WebClient are stored in the .proxy property and are populated
+from the **DefaultWebProxy** property when creating the object. We can view these settings using the **GetProxy** method by specifying the URL to test against.
+```
+[System.Net.WebRequest]::DefaultWebProxy.GetProxy("http://yourwebhostip/run.ps1")
+```
+Now to pervent using the proxy,(sometime blue team use proxy to monitor network traffic), we can modify the download cradle by change the proxy setting to null. In addtion, the defult  Net.WebClinet download cradle has no user-agent string. We can add it to blend in more. [DownloadCradle code](/ClientSide/ImprovedDownloadCradle.ps1)
+
