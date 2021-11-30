@@ -79,3 +79,11 @@ from the **DefaultWebProxy** property when creating the object. We can view thes
 ```
 Now to pervent using the proxy,(sometime blue team use proxy to monitor network traffic), we can modify the download cradle by change the proxy setting to null. In addtion, the defult  Net.WebClinet download cradle has no user-agent string. We can add it to blend in more. [DownloadCradle code](/ClientSide/ImprovedDownloadCradle.ps1)
 
+## Net.WebClient for SYSTEM Proxy
+System account does not have a proxy configuration set. If the environment has Proxy for outgoing web traffic, the script host/web download cradle TTPs may fail to call back to C2.
+
+To force the session through a proxy, we can copy a configuration from a standard user account on the system to system account's proxy setting. Proxy settings for each user are stored in the registry at the following path **HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\InternetSettings**
+[System proxy download cradle code](/ClientSide/SystemProxyWebCradle.ps1) fixs this issue.
+
+ 
+
