@@ -83,6 +83,7 @@ Now to pervent using the proxy,(sometime blue team use proxy to monitor network 
 System account does not have a proxy configuration set. If the environment has Proxy for outgoing web traffic, the script host/web download cradle TTPs may fail to call back to C2.
 
 To force the session through a proxy, we can copy a configuration from a standard user account on the system to system account's proxy setting. Proxy settings for each user are stored in the registry at the following path **HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\InternetSettings**
+
 [System proxy download cradle code](/ClientSide/SystemProxyWebCradle.ps1) fixs this issue.
 
  
