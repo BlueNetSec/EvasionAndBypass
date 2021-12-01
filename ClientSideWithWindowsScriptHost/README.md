@@ -11,4 +11,4 @@ Method 1: Let's Create [Jscript payload Dropper](/ClientSideWithWindowsScriptHos
 Method 2: To Do, Let's make the dropper proxy-aware, research setProxy method, Page 107.
 
 ## Mix Jscript and C#
-Let's run payload completely from memory by using Win32 APIs. We can't invoke Win32API directly from Jscript. We'll embed a complited C# assembly in the Jscript file and execute it.
+Let's run payload completely from memory by using Win32 APIs. We can't invoke Win32API directly from Jscript. We'll embed a complited C# assembly in the Jscript file and execute it. We will need to use the [DotNetToJScript github code](https://github.com/tyranid/DotNetToJScript), once complie the example source code, we will use [DotNetToJScript.exe](/ClientSideWithWindowsScriptHost/DotNetToJScript.exe) with [NDesk.Options.dll](/ClientSideWithWindowsScriptHost/NDesk.Options.dll) to compile [ExampleAssembly.dll](/ClientSideWithWindowsScriptHost/DotNetToJScript.exe) into an [demo.js](/ClientSideWithWindowsScriptHost/demo.js) jscript.
