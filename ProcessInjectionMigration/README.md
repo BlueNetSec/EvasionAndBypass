@@ -15,3 +15,4 @@ To inject a process we can use the folloing Win32 API
 
 Now, We know what API to use, let's create a c# Console App(.NET Framework) [process inject code](/ProcessInjectionMigration/Program.cs) using the above APIs. Hint, don't forget use [P/Invoke resource](www.pinvoke.net)for reference on how to declear Win32API in C#.
 - ToDo: The C# inject code works fine. Instead of hardcoding the Process ID, try to use **Process.GetProcessByName** method to resolve it dynamically.(page 140)
+- TODO:APIs NtCreateSection, NtMapViewOfSection, NtUnMapViewOfSection, and NtClose in ntdll.dll can be used as alternatives to VirtualAllocEx and WriteProcessMemory. Let's do some research and write this one in c#.(page 140)
