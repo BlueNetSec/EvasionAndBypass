@@ -38,4 +38,4 @@ sudo python SharpShooter.py --payload js --dotnetver 4 --stageless --rawscfile /
 Now we can use the same code to compile a new dll to used in powershell.
 - 1.Create a New **Class Libary .NET Framework project**
 - 2.use the same ttps and compile the [cs code](/ClientSideWithWindowsScriptHost/Class1.cs) into dll
-- 3.create powershell [payload dropper] (/ClientSideWithWindowsScriptHost/reflectionRunner.ps1).
+- 3.create powershell [payload dropper](/ClientSideWithWindowsScriptHost/reflectionRunner.ps1).
