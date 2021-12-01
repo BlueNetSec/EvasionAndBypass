@@ -17,4 +17,4 @@ Let's run payload completely from memory by using Win32 APIs. We can't invoke Wi
 DotNetToJScript.exe ExampleAssembly.dll --lang=Jscript --ver=v4 -o demo.js
 ```
 
-Now, We can modify the default TestClass.cs to write our [payload dropper](/ClientSideWithWindowsScriptHost/TestClass.cs ) and conver it to jscript using the same DotNetToJScript.exe command.
+Now, We can modify the default TestClass.cs to write our [payload dropper](/ClientSideWithWindowsScriptHost/TestClass.cs ) in c# and conver it to jscript using the same DotNetToJScript.exe command.
