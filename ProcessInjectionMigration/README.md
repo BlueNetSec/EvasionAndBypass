@@ -12,3 +12,6 @@ To inject a process we can use the folloing Win32 API
 - 1.[OpenProcess](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-openprocess) open a channel from one process to another
 - 2.[VirtualAllocEx](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualallocex) and [WriteProcessMemory](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-writeprocessmemory) to modify the memory space
 - 3.[CreateRemoteThread](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createremotethread) create a new execution thread inside of the remote process
+
+Now, We know what API to use, let's create a c# Console App(.NET Framework) [process inject code](/ProcessInjectionMigration/Program.cs) using the above APIs. Hint, don't forget use [P/Invoke resource](www.pinvoke.net)for reference on how to declear Win32API in C#.
+- ToDo: The C# inject code works fine. Instead of hardcoding the Process ID, try to use Process.GetProcessByName method to resolve it dynamically.(page 140)
