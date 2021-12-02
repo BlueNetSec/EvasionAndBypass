@@ -41,4 +41,9 @@ HANDLE CreateRemoteThread(
 We must consider some restictions:
 - 1. the dll must be written in C/C++ and must be unmanaged, because managed c# based DLL will NOT work with unmanaged process.
 - 2.DLLs contian APIs that are called after the DLL is loaded.  In order to call these APIs, an application would first have to “resolve” their names to memory addresses using GetProcAddress. In our case, GetProcAddress can't reslove an API in a remote process. We need to work around it.
-- 3.let's create dll with msfvenom and write [inject c# code](/ProcessInjectionMigration/dllinject.cs) to force target to download our dll and load dll path into memory, and invoke dll with remotethreatexecute API by calling LoadlibaryA.
+- 3.let's create dll with msfvenom and write [inject c# code](/ProcessInjectionMigration/dllinject.cs) to force target to download our dll, load dll path into memory, and invoke dll with remotethreatexecute API by calling LoadlibaryA.
+
+## Reflective DLL injection
+Let's improve our ttp. The pervious inject method write dll to disk, which is significant compromise. LoadLibrary performs a series of actions including loading DLL files from disk and setting the correct memory permissions. In order to implement reflective DLL injection, we could write custom code to essentially recreate and improve upon the functionality of LoadLibrary.(TODO, I need to do more research for this....).
+
+For Now, let's steal this [powershell reflective DLL injection code](/ProcessInjectionMigration/Invoke-ReflectivePEInjection.ps1) from other security researchers..
