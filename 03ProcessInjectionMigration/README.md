@@ -13,7 +13,7 @@ To inject a process we can use the folloing Win32 API
 - 2.[VirtualAllocEx](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-virtualallocex) and [WriteProcessMemory](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-writeprocessmemory) to modify the memory space
 - 3.[CreateRemoteThread](https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createremotethread) create a new execution thread inside of the remote process
 
-Now, We know what API to use, let's create a c# Console App(.NET Framework) [process inject code](/ProcessInjectionMigration/Program.cs) using the above APIs. Hint, don't forget use [P/Invoke resource](www.pinvoke.net)for reference on how to declear Win32API in C#.
+Now, We know what API to use, let's create a c# Console App(.NET Framework) [process inject code](/03ProcessInjectionMigration/Program.cs) using the above APIs. Hint, don't forget use [P/Invoke resource](www.pinvoke.net)for reference on how to declear Win32API in C#.
 - ToDo: The C# inject code works fine. Instead of hardcoding the Process ID, try to use **Process.GetProcessByName** method to resolve it dynamically.(page 140)
 - ToDO:APIs NtCreateSection, NtMapViewOfSection, NtUnMapViewOfSection, and NtClose in ntdll.dll can be used as alternatives to VirtualAllocEx and WriteProcessMemory. Let's do some research and write this one in c#.(page 140)
 
@@ -41,13 +41,13 @@ HANDLE CreateRemoteThread(
 We must consider some restictions:
 - 1.the dll must be written in C/C++ and must be unmanaged, because managed c# based DLL will NOT work with unmanaged process.
 - 2.DLLs contian APIs that are called after the DLL is loaded.  In order to call these APIs, an application would first have to “resolve” their names to memory addresses using GetProcAddress. In our case, GetProcAddress can't reslove an API in a remote process. We need to work around it.
-- 3.let's create dll with msfvenom and write [inject c# code](/ProcessInjectionMigration/dllinject.cs) to force target to download our dll, load dll path into memory, and invoke dll with remotethreatexecute API by calling LoadlibaryA.
+- 3.let's create dll with msfvenom and write [inject c# code](/03ProcessInjectionMigration/dllinject.cs) to force target to download our dll, load dll path into memory, and invoke dll with remotethreatexecute API by calling LoadlibaryA.
 
 ## Reflective DLL injection
 Let's improve our ttp. The pervious inject method write dll to disk, which is significant compromise. LoadLibrary performs a series of actions including loading DLL files from disk and setting the correct memory permissions. In order to implement reflective DLL injection, we could write custom code to essentially recreate and improve upon the functionality of LoadLibrary.(TODO, I need to do more research for this....).
 
-For Now, let's steal this [powershell reflective DLL injection code](/ProcessInjectionMigration/Invoke-ReflectivePEInjection.ps1) from other security researchers.
-The script perfoms reflection to avoid writing assemblies to disk, and it parses the desired PE file. It has ablitiy toreflectively load dll or exe into local process, or load dll to a remote process. [ReflectedInjectDll](/ProcessInjectionMigration/ReflectiveDllInject.ps1) this code save our malicous dll to a byte array and invoke the ReflectivePEInjection to inject our dll into explorer process.
+For Now, let's steal this [powershell reflective DLL injection code](/03ProcessInjectionMigration/Invoke-ReflectivePEInjection.ps1) from other security researchers.
+The script perfoms reflection to avoid writing assemblies to disk, and it parses the desired PE file. It has ablitiy toreflectively load dll or exe into local process, or load dll to a remote process. [ReflectedInjectDll](/03ProcessInjectionMigration/ReflectiveDllInject.ps1) this code save our malicous dll to a byte array and invoke the ReflectivePEInjection to inject our dll into explorer process.
 
 ## Process Hollowing Theory
 A process is created through **CreateProcess** API, the OS will 1. create virtual memory space. 2. Allocates stack, Thread Environment Block (TEB) and the Process
@@ -63,5 +63,5 @@ Environment Block (PEB), and the base address of the executable is** 0x10** byte
 - 4.Read e_lfanew field located at offset **0x3C** from the exe base address, it contains the offset from begining of the PE to the PE header address(add the offset to base address to get the PE header address).
 - 5.Read the value at PE header address, and read the EntryPoint Relative Virtual Address(RVA) located at offset 0x28 from the PE header
 - 6.Now add RVA content to base address to get the virtual address of the entry point inside the remote process
-- 7.Now you got the entry point, you will write shell code to the entry point and kick off the thread, completed c# code for [processHollowing](/ProcessInjectionMigration/hollow.cs) .
+- 7.Now you got the entry point, you will write shell code to the entry point and kick off the thread, completed c# code for [processHollowing](/03ProcessInjectionMigration/hollow.cs) .
 
