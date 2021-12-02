@@ -50,3 +50,18 @@ For Now, let's steal this [powershell reflective DLL injection code](/ProcessInj
 The script perfoms reflection to avoid writing assemblies to disk, and it parses the desired PE file. It has ablitiy toreflectively load dll or exe into local process, or load dll to a remote process. [ReflectedInjectDll](/ProcessInjectionMigration/ReflectiveDllInject.ps1) this code save our malicous dll to a byte array and invoke the ReflectivePEInjection to inject our dll into explorer process.
 
 ## Process Hollowing Theory
+A process is created through **CreateProcess** API, the OS will 1. create virtual memory space. 2. Allocates stack, Thread Environment Block (TEB) and the Process
+Environment Block (PEB). 3. Load all required DLL and EXE into memory, lasttly the OS will create a thread to execute the xode.
+
+To Perform Process Hollowing attack, we need to create a process with **CREATE_SUSPENDED** flag, which halted the execution of the tread before its first instruction, then we will inject our shell code at the EntryPoint of the executable.
+
+When a process is created with suspended flag, we could use Win32 ZwQueryInformationProcess to retrieve information about the target process. Let's talk about how we can locate the EntryPoint of the executbale:
+- 1.Call [ZwQueryInformationProcess](https://docs.microsoft.com/en-us/windows/win32/procthread/zwqueryinformationprocess) to obtain the address of Process
+Environment Block (PEB), and the base address of the executable is** 0x10** bytes into the PEB.
+- 2.Call [ReadProcessMemory](https://docs.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory) to read from a remote process, read out the remote PEB at offset 0x10.
+- 3.Call ReadProcessMemory to read the first 0x200 bytes of memory, so we can analyze the remote PE header, Note: All PE file has the same header format.
+- 4.Read e_lfanew field located at offset **0x3C** from the exe base address, it contains the offset from begining of the PE to the PE header address(add the offset to base address to get the PE header address).
+- 5.Read the value at PE header address, and read the EntryPoint Relative Virtual Address(RVA) located at offset 0x28 from the PE header
+- 6.Now add RVA content to base address to get the virtual address of the entry point inside the remote process
+- 7.Now you got the entry point, you will write shell code to the entry point and kick off the thread, completed c# code for [processHollowing](/ProcessInjectionMigration/hollow.cs) .
+
