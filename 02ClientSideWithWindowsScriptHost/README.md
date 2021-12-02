@@ -7,17 +7,17 @@ var shell = new ActiveXObject("WScript.Shell")
 var res = shell.Run("cmd.exe");
 ```
 
-Method 1: Let's Create [Jscript payload Dropper](/ClientSideWithWindowsScriptHost/JscriptPayloadDropper.js) to download and execute payload from our wbesite.
+Method 1: Let's Create [Jscript payload Dropper](/02ClientSideWithWindowsScriptHost/JscriptPayloadDropper.js) to download and execute payload from our wbesite.
 Method 2: To Do, Let's make the dropper proxy-aware, research setProxy method, Page 107.
 
 ## Mix Jscript and C#
-Let's run payload completely from memory by using Win32 APIs. We can't invoke Win32API directly from Jscript. We'll embed a complited C# assembly in the Jscript file and execute it. We will need to use the [DotNetToJScript github code](https://github.com/tyranid/DotNetToJScript), once complie the example source code, we will use [DotNetToJScript.exe](/ClientSideWithWindowsScriptHost/DotNetToJScript.exe) with [NDesk.Options.dll](/ClientSideWithWindowsScriptHost/NDesk.Options.dll) to compile [ExampleAssembly.dll](/ClientSideWithWindowsScriptHost/DotNetToJScript.exe) into an [demo.js](/ClientSideWithWindowsScriptHost/demo.js) jscript.
+Let's run payload completely from memory by using Win32 APIs. We can't invoke Win32API directly from Jscript. We'll embed a complited C# assembly in the Jscript file and execute it. We will need to use the [DotNetToJScript github code](https://github.com/tyranid/DotNetToJScript), once complie the example source code, we will use [DotNetToJScript.exe](/02ClientSideWithWindowsScriptHost/DotNetToJScript.exe) with [NDesk.Options.dll](/02ClientSideWithWindowsScriptHost/NDesk.Options.dll) to compile [ExampleAssembly.dll](/02ClientSideWithWindowsScriptHost/DotNetToJScript.exe) into an [demo.js](/02ClientSideWithWindowsScriptHost/demo.js) jscript.
 
 ```
 DotNetToJScript.exe ExampleAssembly.dll --lang=Jscript --ver=v4 -o demo.js
 ```
 
-Now, We can modify the default TestClass.cs to write our [payload dropper](/ClientSideWithWindowsScriptHost/TestClass.cs ) in c# and conver it to jscript using the same DotNetToJScript.exe command.
+Now, We can modify the default TestClass.cs to write our [payload dropper](/02ClientSideWithWindowsScriptHost/TestClass.cs ) in c# and conver it to jscript using the same DotNetToJScript.exe command.
 
 The above method can also be done by using [SharpShoter](https://github.com/mdsecactivebreach/SharpShooter) framework.
 
@@ -37,6 +37,6 @@ sudo python SharpShooter.py --payload js --dotnetver 4 --stageless --rawscfile /
 Let's  fetch the pre-compiled assembly with c# and load it directly into memory using powershell. 
 Now we can use the same code to compile a new dll to used in powershell.
 - 1.Create a New **Class Libary .NET Framework project**
-- 2.use the same ttps and compile the [cs code](/ClientSideWithWindowsScriptHost/Class1.cs) into dll
-- 3.create powershell [payload dropper](/ClientSideWithWindowsScriptHost/reflectionRunner.ps1).
+- 2.use the same ttps and compile the [cs code](/02ClientSideWithWindowsScriptHost/Class1.cs) into dll
+- 3.create powershell [payload dropper](/02ClientSideWithWindowsScriptHost/reflectionRunner.ps1).
 
