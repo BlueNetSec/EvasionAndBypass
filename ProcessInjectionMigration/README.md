@@ -46,4 +46,5 @@ We must consider some restictions:
 ## Reflective DLL injection
 Let's improve our ttp. The pervious inject method write dll to disk, which is significant compromise. LoadLibrary performs a series of actions including loading DLL files from disk and setting the correct memory permissions. In order to implement reflective DLL injection, we could write custom code to essentially recreate and improve upon the functionality of LoadLibrary.(TODO, I need to do more research for this....).
 
-For Now, let's steal this [powershell reflective DLL injection code](/ProcessInjectionMigration/Invoke-ReflectivePEInjection.ps1) from other security researchers..
+For Now, let's steal this [powershell reflective DLL injection code](/ProcessInjectionMigration/Invoke-ReflectivePEInjection.ps1) from other security researchers.
+The script perfoms reflection to avoid writing assemblies to disk, and it parses the desired PE file. It has ablitiy toreflectively load dll or exe into local process, or load dll to a remote process.[reflectedInjectDll](/ProcessInjectionMigration/ReflectiveDllInject.ps1) this code save our malicous dll to a byte array and invoke the ReflectivePEInjection to inject our dll into explorer process.
