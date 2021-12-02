@@ -39,7 +39,7 @@ HANDLE CreateRemoteThread(
 );
 ```
 We must consider some restictions:
-- 1. the dll must be written in C/C++ and must be unmanaged, because managed c# based DLL will NOT work with unmanaged process.
+- 1.the dll must be written in C/C++ and must be unmanaged, because managed c# based DLL will NOT work with unmanaged process.
 - 2.DLLs contian APIs that are called after the DLL is loaded.  In order to call these APIs, an application would first have to “resolve” their names to memory addresses using GetProcAddress. In our case, GetProcAddress can't reslove an API in a remote process. We need to work around it.
 - 3.let's create dll with msfvenom and write [inject c# code](/ProcessInjectionMigration/dllinject.cs) to force target to download our dll, load dll path into memory, and invoke dll with remotethreatexecute API by calling LoadlibaryA.
 
