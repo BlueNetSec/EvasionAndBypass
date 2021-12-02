@@ -66,10 +66,11 @@ simulated, the emulator will detect the Sleep call and fast-forward through the 
 - 4.After adding those 3 ttps, this is our [beefy C# dropper](/04FunWithAntivirus/beefyC#dropper.cs)
 - 5.TODO, reseach more uncommon API, lookinto Win32 FlsAlloc.(page 185)
 
-## Play with VBA for a beefy Marco(page 190)
+## Play with VBA for a beefy Marco
 We could use the sane ttp as mentioned with c# methos. 1. use a ciper to encrypt payload, 2. add delay function, 3.using non-emulated API in VBA script. The microsofy office files with .doc and .xls extension use a [Compound File Binary File Format](https://docs.microsoft.com/en-us/openspecs/windows_protocols/ms-cfb/53989ce4-7b05-4f8d-829b-d08d6148375b), which combine multiple files into a single disk file.
 
 We can use [FlexHex editor](http://www.flexhex.com/download/) to inspect the .doc file fomrat to understand it better.
 - 1.open a marco word doc with  Flex, File > Open > OLE Compound File
 - 2.expend Macro and VBA folders on the lower-left Navigation window, content related to VBA macros are located in the Macros
 - 3.The **Project** file contains project information. We can edit the Project file to hide macro from within the graphical office VBA editor. Select **“Module=NewMacros”**, which is what the GUI editor uses to link the displayed macros, replace this value with null.highlighting the ASCII string and navigating to **Edit > Insert Zero Block**
+- 4.VBA PerfomanceCache. VBA use P-code, a compiled version of the VBA textual code for the specific version of Microsoft Office and VBA it was created on. When a Microsoft Word document is opened on a different computer thatuses the same version and edition of Microsoft Word, the cached pre-compiled P-code is executed, avoiding the translation of the textual VBA code by the VBA interpreter. This means that in some scenarios, the VBA source code can be removed, as long as our document is opened on a computer that uses the same version of Microsoft Word installed in the default location, the VBA source code is ignored and the P-code is executed instead. We can remove the VBA source by y locating the VBA source code inside NewMacros. mark the bytes that start with  **“Attribute VB_Name”** and select all the remaining bytes, and insert zero block.
