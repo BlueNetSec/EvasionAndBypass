@@ -44,3 +44,46 @@ KERNELBASE!WriteFile+0xf:
 0:000> dd rsp L1
 00000063`4c93e8c8 0
 ```
+
+## AMSI baseline knowledge
+![image](https://user-images.githubusercontent.com/24555370/144544889-b12729b6-1dca-4c5b-940e-f5e2dd98e71b.png)
+
+The unmanaged dynamic link library AMSI.DLL is loaded into every PowerShell. The dll forwarded relevant information to Window Deferder through Remote Procedure Call(RPC).After Windows Defender analyzes the data, the result is sent back to AMSI.DLL inside the PowerShell process.
+
+When PowerShell launched, it loads AMSI.DLL and call AmsiInitialize API, AmsiInitialize takes place before we are able to invoke any PowerShell
+commands, which means we cannot influence it in
+```
+HRESULT AmsiInitialize(
+LPCWSTR appName, -> name of the application
+HAMSICONTEXT *amsiContext -> a pointer to a context structure that is populated by the function
+);
+```
+Once AmsiInitialize is complete and the context structure is created, AMSI can parse the issued
+commands. When we execute a PowerShell command, the AmsiOpenSession API is called. It accepts the amsiContext context structure and creates a session structure to
+be used in all calls within that session.
+```
+HRESULT AmsiOpenSession(
+HAMSICONTEXT amsiContext,
+HAMSISESSION *amsiSession
+);
+```
+
+Next AmsiScanString and AmsiScanBuffer are used to capture the console input or script content either as a string or as a binary buffer respectively
+```
+HRESULT AmsiScanBuffer(
+HAMSICONTEXT amsiContext, -> amsi context buffer
+PVOID buffer, -> pointer to the buffer containing the content to be scanned
+ULONG length, -> length of the buffer
+LPCWSTR contentName, -> input identifier
+HAMSISESSION amsiSession, -> session structure
+AMSI_RESULT *result -> pointer to a storage buffer for the scan result, a enum type, value 32768 indicates persence of malware, 1 is clean scan
+);
+```
+Once Scan is complete, AmsiCloseSession is called to close the AMSI scanning session.
+
+## Hook your powershell with Frida
+Frida is a opensource tool allow us to hook Win32APi through a python backend and display the result(return values, input arguments) with JavaScript. If we want to learn more ASMI behavior, we have hook the powershell with Frida to observe the API calls.
+
+Setting up Frida
+- 1. install python
+- 2. install pip with python3 [get-pip.py](/05FightAdvancedAntivirus/get-pip.py)
