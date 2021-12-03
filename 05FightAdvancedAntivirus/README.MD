@@ -85,5 +85,7 @@ Once Scan is complete, AmsiCloseSession is called to close the AMSI scanning ses
 Frida is a opensource tool allow us to hook Win32APi through a python backend and display the result(return values, input arguments) with JavaScript. If we want to learn more ASMI behavior, we have hook the powershell with Frida to observe the API calls.
 
 Setting up Frida
-- 1. install python
-- 2. install pip with python3 [get-pip.py](/05FightAdvancedAntivirus/get-pip.py)
+- 1.install python
+- 2.install pip with python3 [get-pip.py](/05FightAdvancedAntivirus/get-pip.py)
+- 3.install Frida with pip install frida-tools
+- 4.add Frida tools to your PATH environment, it should be something like  C:\Users\mst\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.9_qp0\LocalCache\local-packages\Python39\Scripts;
