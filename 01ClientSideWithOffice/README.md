@@ -35,7 +35,7 @@ Method 3: (run VBA shellcode in memory): Calling Win32APIs from VBA, useing 3 wi
 - [VBA memory shellcode runner](/01ClientSideWithOffice/method3vbamemoryshellcode.vbs)
 
 ## Calling Win32 API from powershell
-Summary: PowerShell cannoy natively inteact with Win32APIs, but we can use c# in powershell session. In C#, We can declare and import Win32 APIs using **DllImportAttribute**, this allows us to invoke functions in unmanaged dynamic link libraries. The easily way is [P/Invoke](www.pinvoke.net)
+Summary: PowerShell cannoy natively inteact with Win32APIs, but we can use c# in powershell session. In C#, We can declare and import Win32 APIs using **DllImportAttribute**, this allows us to invoke functions in unmanaged dynamic link libraries. The easily way is [PInvoke](www.pinvoke.net)
 
 Method 1: Add-Type TTPs, Create a powershell variable and set it to a block of text. Inside that text, we use C# sytnx to import the desired APIs, finally we use **Add-Type** to compile the C# code contained in the decleared variable.
 - Create the [powershell memory shell code runner](/01ClientSideWithOffice/memoryShellCodeRunner.ps1)
