@@ -8,6 +8,7 @@ var res = shell.Run("cmd.exe");
 ```
 
 Method 1: Let's Create [Jscript payload Dropper](/02ClientSideWithWindowsScriptHost/JscriptPayloadDropper.js) to download and execute payload from our wbesite.
+
 Method 2: To Do, Let's make the dropper proxy-aware, research setProxy method, Page 107.
 
 ## Mix Jscript and C#
