@@ -157,3 +157,5 @@ amsi!AmsiOpenSession:
 
 ![image](https://user-images.githubusercontent.com/24555370/144694463-24e66adb-4afc-4867-948d-094dd8f74e3f.png)
 
+- 7.The method works, now we need to create a [BeatUpamsiContextHeader.ps1](/05FightAdvancedAntivirus/BeatUpHeader.ps1) to automate this process for us.. FYI the official name for this kind of attack is BeatUpamsiContextHeader powershell reflection ttps.
+
