@@ -96,7 +96,7 @@ Frida is a opensource tool allow us to hook a process and watch Win32APi through
 - 3.modify the defult javascript output format, so what can get input/output values. In our case, we want to know what is going on with AmsiScanBuffer located at **C:\Users\\mst\__handlers__\amsi.dll\AmsiScanBuffer.js** [AmsiScanBuffer.js](/05FightAdvancedAntivirus/AmsiScanBuffer.js)
 - 4.Now you can interact with powershll process and watch the API calls.
 
-## Bypass AMSI with Reflection in PowerShell, 
+## Destory amsiContext header to Bypass AMSI
 Now we got everything set up, we can test our ttps to bypass AMSI. recall AmsiInitialize API has a argument amsiContext, a pointer to a context structure. The context structure is used for rest of the APIs call in asmi.dll. We will use Frida to locate its address in memory and then use WinDbg to inspect its content. 
 - 1.run fria-trace to examin pwoershell command input, after typing a test input in powershell you will find amsiContext address  in frida
 ```
@@ -153,7 +153,7 @@ amsi!AmsiOpenSession:
 (868c.6d80): CLR exception - code e0434352 (first chance)
 (868c.6d80): CLR exception - code e0434352 (first chance)
 ```
-- 6.Let's run a malicious string in powershell, you will see on the left powershell process it print the malicious stirng with our bypass TTP. Very Nice.
-
+- 6.Let's run a malicious string in powershell, you will see on the left powershell process it print the malicious stirng with our bypass TTP. By corrupting the amsiContext header, we have effectively shut down AMSI without affecting PowerShell. We have effectively bypassed AMSI. Very nice.
+- 
 ![image](https://user-images.githubusercontent.com/24555370/144694463-24e66adb-4afc-4867-948d-094dd8f74e3f.png)
 
