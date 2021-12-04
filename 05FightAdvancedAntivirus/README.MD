@@ -82,10 +82,15 @@ AMSI_RESULT *result -> pointer to a storage buffer for the scan result, a enum t
 Once Scan is complete, AmsiCloseSession is called to close the AMSI scanning session.
 
 ## Hook your powershell with Frida
-Frida is a opensource tool allow us to hook Win32APi through a python backend and display the result(return values, input arguments) with JavaScript. If we want to learn more ASMI behavior, we have hook the powershell with Frida to observe the API calls.
+Frida is a opensource tool allow us to hook a process and watch Win32APi through a python backend and display the result(return values, input arguments) with JavaScript. If we want to learn more ASMI behavior, we have hook the powershell with Frida to observe the API calls.
 
-Setting up Frida
+#### Setting up Frida
 - 1.install python
 - 2.install pip with python3 [get-pip.py](/05FightAdvancedAntivirus/get-pip.py)
 - 3.install Frida with pip install frida-tools
 - 4.add Frida tools to your PATH environment, it should be something like  C:\Users\mst\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.9_qp0\LocalCache\local-packages\Python39\Scripts;
+
+#### Montior process(powershell) with Frida
+- 1.Start a 64 bit powershell process and get the process ID ```Get-Process -Name powershell```
+- 2.Open command prompt, and run ```frida-trace -p powershellPID -x amsi.dll -i Amsi* ``` 
+- 3.modify the defult javascript output format, so what can get input/output values. In our case, we want to know what is going on with AmsiScanBuffer located at **C:\Users\\mst\__handlers__\amsi.dll\AmsiScanBuffer.js** [AmsiScanBuffer.js](/05FightAdvancedAntivirus/AmsiScanBuffer.js)
