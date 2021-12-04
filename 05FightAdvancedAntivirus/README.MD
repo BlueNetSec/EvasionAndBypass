@@ -96,7 +96,8 @@ Frida is a opensource tool allow us to hook a process and watch Win32APi through
 - 3.modify the defult javascript output format, so what can get input/output values. In our case, we want to know what is going on with AmsiScanBuffer located at **C:\Users\\mst\__handlers__\amsi.dll\AmsiScanBuffer.js** [AmsiScanBuffer.js](/05FightAdvancedAntivirus/AmsiScanBuffer.js)
 - 4.Now you can interact with powershll process and watch the API calls.
 
-## Destory amsiContext header to Bypass AMSI
+## Bypass AMSI in Powershell
+#### Destory amsiContext header
 Now we got everything set up, we can test our ttps to bypass AMSI. recall AmsiInitialize API has a argument amsiContext, a pointer to a context structure. The context structure is used for rest of the APIs call in asmi.dll. We will use Frida to locate context structure address in memory and then use WinDbg to inspect its content. 
 - 1.run fria-trace to examin pwoershell command input, after typing a test input in powershell you will find amsiContext address  in frida
 ```
@@ -159,3 +160,13 @@ amsi!AmsiOpenSession:
 
 - 7.The method works, now we need to create a [BeatUpamsiContextHeader.ps1](/05FightAdvancedAntivirus/BeatUpHeader.ps1) to automate this process for us.. FYI the official name for this kind of attack is BeatUpamsiContextHeader powershell reflection ttps.
 
+#### Attack AmsiInitialize fcuntion
+Recall amsiContext? In the pervious TTPs, We destory the amsiContext header to bypass AMSI. This context structure is created by AmsiInitialize function.
+We can manipulate a result variable set by AmsiInitialize, which also lead to AMSI bypass through amsiInitFailed field.
+```
+[Ref].Assembly.GetType('System.Management.Automation.AmsiUtils').GetField('amsiInitFailed','NonPublic,Static').SetValue($null,$true)
+```
+The amsiInitFailed field is verified by AmsiOpenSession in the same manner as the amsiContext header, which leads to an error. This AMSI bypass  still works even though it was discovered in 2016, but the substrings ‘AmsiUtils’ and ‘amsiInitFailed’ have since been flagged as malicious.
+We could reuse the dynamic discovery of types and fields from our amsiContext AMSI bypass to evade the signatures and reuse this bypass.
+
+**TODO.Create the bypass TTP script using dynamic discovery type.**
