@@ -153,6 +153,7 @@ amsi!AmsiOpenSession:
 (868c.6d80): CLR exception - code e0434352 (first chance)
 (868c.6d80): CLR exception - code e0434352 (first chance)
 ```
-- 6.Let's run a malicious string in powershell, you will see on the left powershell process it print the malicious stirng with our bypass TTP. Vert Nice.
+- 6.Let's run a malicious string in powershell, you will see on the left powershell process it print the malicious stirng with our bypass TTP. Very Nice.
+
 ![image](https://user-images.githubusercontent.com/24555370/144694463-24e66adb-4afc-4867-948d-094dd8f74e3f.png)
 
