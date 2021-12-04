@@ -170,3 +170,4 @@ The amsiInitFailed field is verified by AmsiOpenSession in the same manner as th
 We could reuse the dynamic discovery of types and fields from our amsiContext AMSI bypass to evade the signatures and reuse this bypass.
 
 **TODO.Create the bypass TTP script using dynamic discovery type.**
+P237
