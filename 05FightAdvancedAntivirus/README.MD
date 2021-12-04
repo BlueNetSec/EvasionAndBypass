@@ -97,7 +97,7 @@ Frida is a opensource tool allow us to hook a process and watch Win32APi through
 - 4.Now you can interact with powershll process and watch the API calls.
 
 ## Destory amsiContext header to Bypass AMSI
-Now we got everything set up, we can test our ttps to bypass AMSI. recall AmsiInitialize API has a argument amsiContext, a pointer to a context structure. The context structure is used for rest of the APIs call in asmi.dll. We will use Frida to locate its address in memory and then use WinDbg to inspect its content. 
+Now we got everything set up, we can test our ttps to bypass AMSI. recall AmsiInitialize API has a argument amsiContext, a pointer to a context structure. The context structure is used for rest of the APIs call in asmi.dll. We will use Frida to locate context structure address in memory and then use WinDbg to inspect its content. 
 - 1.run fria-trace to examin pwoershell command input, after typing a test input in powershell you will find amsiContext address  in frida
 ```
  3087 ms  [*] AmsiScanBuffer()
