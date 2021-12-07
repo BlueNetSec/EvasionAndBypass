@@ -302,3 +302,37 @@ query the desire location
 ```
 
 Putting everything togther, we can write [DisableAmsi.js](/05FightAdvancedAntivirus/DisableAmsi.js)  to set register key to 0. Or you can run this [all in on js dropper](/05FightAdvancedAntivirus/DisableAmsiReg.js) TODO, I need to complete this code, need to add full payload dropper. 
+
+## Inject ASMI.DLL itslef? JScript bypass
+The idea here is if we could prevent AMSI.DLL from loading or load our own version of it, we could force the AMSI implementation in wscript.exe to produce an error and abort.
+
+- First, we need to use WinDebg to inspect AMSI.DLL loading process, instruct the debugger to catch the load of amsi DLL in WinDbg
+
+```
+0:000> sxe ld amsi
+0:000> g
+ModLoad: 00007fff`c6e20000 00007fff`c6e34000 C:\Windows\SYSTEM32\amsi.dll
+
+0:000> lm m amsi
+Browse full module list
+start             end               module name
+00007fff`c6e20000 00007fff`c6e34000 amsi (deferred)
+```
+- Second, backtrace to get list of called functions that led to current execution point, hint, DLL is typically loaded through the Win32 LoadLibraryor LoadLibraryEx APIs
+```
+0:000> k
+# Child-SP           RetAddr           Call Site
+08 00000085`733ed010 00007fff`cff40391 ntdll!LdrLoadDll+0xe4
+09 00000085`733ed100 00007fff`a3a84ed8 KERNELBASE!LoadLibraryExW+0x161
+0a 00000085`733ed170 00007fff`a3a84c6c jscript!COleScript::Initialize+0x2c
+```
+- Third, unassemble the function in the callstack to inspect the arguments supplied to LoadLibraryExW
+```
+0:000> u jscript!COleScript::Initialize LA
+00007fff`a3a84ec5 41b800080000 mov r8d,800h
+00007fff`a3a84ecb 488d0ddee40800 lea rcx,[jscript!`string' (00007fff`a3b133b0)]
+
+0:000> du 7fff`a3b133b0
+00007fff`a3b133b0 "amsi.dll"
+```
+Hint, R8 (the third argument) is set to 0x800->LOAD_LIBRARY_SEARCH_SYSTEM32, which forces the function to search c:\windows\system32 first. This pervent the dll hijicking attack, but i found this [intersting blog](https://www.tiraniddo.dev/2018/06/disabling-amsi-in-jscript-with-one.html) discussing a bypass method by renaming wscript.exe to amsi.dll and executing it. [overwrite.js](/05FightAdvancedAntivirus/overwrite.js )
