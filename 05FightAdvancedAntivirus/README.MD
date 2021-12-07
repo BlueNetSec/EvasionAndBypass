@@ -336,3 +336,4 @@ start             end               module name
 00007fff`a3b133b0 "amsi.dll"
 ```
 Hint, R8 (the third argument) is set to 0x800->LOAD_LIBRARY_SEARCH_SYSTEM32, which forces the function to search c:\windows\system32 first. This pervent the dll hijicking attack, but i found this [intersting blog](https://www.tiraniddo.dev/2018/06/disabling-amsi-in-jscript-with-one.html) discussing a bypass method by renaming wscript.exe to amsi.dll and executing it. [overwrite.js](/05FightAdvancedAntivirus/overwrite.js )
+TODO: Windows Defender detected a new process named “amsi.dll” and flagged our code. We need to add process hollowing, or process mirgate ttps in this shell code.
