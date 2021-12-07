@@ -85,3 +85,8 @@ which is compiled as part of the processing.
 ```
 C:\Windows\Microsoft.Net\Framework64\v4.0.30319\Microsoft.Workflow.Compiler.exe run.xml results.xml
 ```
+## Bypass AppLocker with JScript
+
+Microsoft HTML Applications (MSHTA) excute .hta files with native mshta.exe. Since mshta.exe is located in C:\Windows\System32 and is a signed Microsoft application, it is
+commonly whitelisted. We can execute our Jscript code with mshta.exe instead of wscript.exe to bypass application whitelisting. This is an [example Jscript code](/06ApplicationWhitelistingBypass/hiddentJscript.hta) embedded inside of HTA file.
+
