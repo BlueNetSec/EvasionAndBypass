@@ -40,3 +40,16 @@ C:\Users\mst>wscript "C:\Program Files(x86)\TeamViewer\TeamViewer12_Logfile.log:
 ```
 C:\Users\mst>python test.py
 ```
+## Bypass AppLocker with Powershell
+Powershell Language Mode: 
+- 1.FullLanguage, allows all cmdlets and the entire .NET framework as well as C# code execution.
+- 2.RestrictedLanguage, allowing default cmdlets but heavily restricting much else
+- 3.NoLanguage disallows all script text
+
+ConstrainedLanguage mode (CLM) with PowerShell version 3.0, allow scripts that are located in whitelisted locations or otherwise comply with a whitelisting rule can execute with full functionality. The most significant limiation excludes calls to the .NET framework, execution of C# code and reflection.
+
+```
+PS C:\Users\mst> $ExecutionContext.SessionState.LanguageMode
+ConstrainedLanguage
+```
+page 288
