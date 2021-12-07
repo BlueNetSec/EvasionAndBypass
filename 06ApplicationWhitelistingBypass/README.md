@@ -52,4 +52,5 @@ ConstrainedLanguage mode (CLM) with PowerShell version 3.0, allow scripts that a
 PS C:\Users\mst> $ExecutionContext.SessionState.LanguageMode
 ConstrainedLanguage
 ```
-page 288
+#### Bypass Constrained language mode(CLM) with custom runsapces
+Powershell call **System.Management.Automation.dll** to create runspace. This measns, we can write c# [powershellrunnerSpace.cs](/06ApplicationWhitelistingBypass/powershellrunnerSpace.cs) to creates a custom PowerShell runsapce and executes our script inside it. 
