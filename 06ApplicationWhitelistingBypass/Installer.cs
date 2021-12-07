@@ -15,9 +15,11 @@ namespace Bypass
      Console.WriteLine("nothing here")
     }
   }
+    // declear Installer method
     [System.ComponentModel.RunInstaller(true)]
     public class Sample : System.Configuration.Install.Installer
     {
+      // declear Unistall method    
       public override void Uninstall(System.Collections.IDictionary savedState)
         {
           //create a runspace object
