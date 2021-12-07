@@ -79,7 +79,7 @@ The ultimate goal is to execute arbitrary C# code via a whitelisted application.
 which is compiled as part of the processing.
 - 2.We will use [dnSpy](https://github.com/dnSpy/dnSpy.git) to reverse engineering System.Workflow.ComponentModel.dll located in C:\Windows\Microsoft.NET\Framework64\v4.0.30319
 - 3.We will follow security researcher Matt Graeber's [rbitrary, Unsigned Code Execution Vector in Microsoft.Workflow.Compiler.exe](https://posts.specterops.io/arbitrary-unsigned-code-execution-vector-in-microsoft-workflow-compiler-exe-3d9294bc5efb) blog for reverse engineering.
-- 4.In summary, we must craft a file containing C# [Compilerbypass.cs](/06ApplicationWhitelistingBypass/Compilerbypass.cs) code, which implements a class that inherits from the Activity class and has a constructor. The file path must be inserted into the XML document along with compiler parameters organized in a serialized format using [Convertoxml.ps1](/06ApplicationWhitelistingBypass) script. 
+- 4.In summary, we must craft a file containing C# [Compilerbypass.cs](/06ApplicationWhitelistingBypass/Compilerbypass.cs) code, which implements a class that inherits from the Activity class and has a constructor. The file path must be inserted into the XML document along with compiler parameters organized in a serialized format using [Convertoxml.ps1](/06ApplicationWhitelistingBypass/Convertoxml.ps1) script. 
 - 5.run the executable with the two input arguments, the second argument can be anything, the first argument is the output from Convertoxml.ps1 script
 
 ```
