@@ -54,3 +54,8 @@ ConstrainedLanguage
 ```
 #### Bypass Constrained language mode(CLM) with custom runsapces
 Powershell call **System.Management.Automation.dll** to create runspace. This measns, we can write c# [powershellrunnerSpace.cs](/06ApplicationWhitelistingBypass/powershellrunnerSpace.cs) to creates a custom PowerShell runsapce and executes our script inside it. 
+
+The above bypass the powershell execution, but if the AppBlocker pervent custom c# execution, our TTPs will not work. We can leverage native Windows application **InstallUtil**.
+This command allows us to install and uninstall server resources by executing the installer components in a specified assembly. We are going to user uninstall method because install method reuqired admin privileges.
+
+We can write [installer.cs](/06ApplicationWhitelistingBypass/Installer.cs) script and compile to our bypass.exe. Once compiled, we can use native windows commands to transfer our file from attack machine to target machine and exuecte it with InstallUtil command.
