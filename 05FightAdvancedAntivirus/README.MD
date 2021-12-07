@@ -301,4 +301,4 @@ query the desire location
 00007fff`a3b134c0 "AmsiEnable"
 ```
 
-Putting everything togther, we can write [DisableAmsi.js](/05FightAdvancedAntivirus/DisableAmsi.js)  to set register key to 0. Or you can run this [all in on js dropper](/05FightAdvancedAntivirus/DisableAmsiReg.js)
+Putting everything togther, we can write [DisableAmsi.js](/05FightAdvancedAntivirus/DisableAmsi.js)  to set register key to 0. Or you can run this [all in on js dropper](/05FightAdvancedAntivirus/DisableAmsiReg.js) TODO, I need to complete this code, need to add full payload dropper. 
