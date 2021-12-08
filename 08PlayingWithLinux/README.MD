@@ -64,7 +64,7 @@ below example will check if user os running as root
 :endif
 ```
 
-## Bypass AV 
+## Bypass AV with encoder and C code wrapper
 
 First, let's test our linux scan with [eicar](https://www.eicar.org/?page_id=3950) project. ```sudo kesl-control --scan-file ./eicar.txt```. The the eicar.txt should be removed. Otherwise, the scanner is not working. We can also check the Kaspersky’s event log for detected events ```sudo kesl-control -E --query | grep DetectName```.
 
