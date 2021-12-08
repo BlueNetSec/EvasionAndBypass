@@ -108,4 +108,8 @@ C:\Users\mst\Desktop>
 cmd.exe (client) 2> whoami
 client\mst
 ```
-
+We can also create a rdp tunnel from kali to Windows
+```
+command (client) 1> listen 127.0.0.1:3389 172.16.51.21:3389
+Listening on 127.0.0.1:3389, sending connections to 172.16.51.21:3389
+```
