@@ -93,3 +93,4 @@ Compile shellcode wrapper, don't forget to compile the c code in the same archit
 ```
 kali@kali:~$ gcc -o CWrapper.out CWrapper.c -z execstack
 ```
+394
