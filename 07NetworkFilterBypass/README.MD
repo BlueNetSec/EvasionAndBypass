@@ -106,6 +106,6 @@ command (client) 1> session -i 2
 
 C:\Users\mst\Desktop>
 cmd.exe (client) 2> whoami
-client\offsec
+client\mst
 ```
 
