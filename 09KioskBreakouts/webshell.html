@@ -1,0 +1,23 @@
+
+<window>
+  <vbox>
+    <vbox scrollable="true" width="500" height="400">
+      <edit>
+       <!---edit element that will display the output of the commands  ---> 
+        <variable>CMDOUTPUT</variable>
+        <input file>/tmp/termout.txt</input>
+      </edit>
+    </vbox>
+    <hbox>
+      <text><label>Command:</label></text>
+      <entry><variable>CMDTORUN</variable></entry>
+      <button>
+        <label>Run!</label>
+         <!---take the shell command variable from the entry box, run it via an action, and write the results to termout.txt ---> 
+        <action>$CMDTORUN > /tmp/termout.txt</action>
+          <!---refresh the edit element’s embedded variable object ---> 
+        <action>refresh:CMDOUTPUT</action>
+      </button>
+    </hbox>
+  </vbox>
+</window>
