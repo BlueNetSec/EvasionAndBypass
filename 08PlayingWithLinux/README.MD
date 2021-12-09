@@ -105,7 +105,11 @@ When applications run on linux, they check for required libraries in a number of
 - 5.System library directories: /lib, /lib64, /usr/lib, /usr/lib64, /usr/local/lib, /usr/local/lib64, and
 potentially others.
 
-Let's wal though an example with up command in linux.
+#### Shared Library Hijacking via LD_LIBRARY_PATH
+when an application runs, it checks for its libraries in an ordered set of locations. After checking its internal RPATH values for hard coded paths, it then checks for an
+environment variable called LD_LIBRARY_PATH. We will overwrite LD_LIBRARY_PATH.
+
+Let's walk though an example with up command in linux.
 - 1.Let's create a c file [lib.c](/08PlayingWithLinux/lib.c), then compile it to lib resource
 - 2.We can compile the share libary with the follwoing command, -Wall->give verbose warnings when compiling, -fPIC ->use position independent code, since shared libraries are loaded in unpredictable memeory locations. -shared -> create a shared library from object file
 
