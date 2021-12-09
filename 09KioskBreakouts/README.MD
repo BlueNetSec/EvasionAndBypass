@@ -50,7 +50,7 @@ A few other useful environment variables include
 | %APPDATA%                 | C:\Documents and Settings\Username\Application Data
 | %COMMONPROGRAMFILES%      | C:\Program Files\Common Files
 | %COMMONPROGRAMFILES(x86)% | C:\Program Files (x86)\Common Files
-| %COMSPEC%                 |C:\Windows\System32\cmd.exe
+| %COMSPEC%                 | C:\Windows\System32\cmd.exe
 | %HOMEDRIVE%               | C:\
 | %HOMEPATH%                | C:\Documents and Settings\Username
 | %PROGRAMFILES%            | C:\Program Files
