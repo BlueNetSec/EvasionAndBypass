@@ -39,3 +39,25 @@ We can use the Firefox Web Developer tools -> Scratchpad, to open an editor and 
 
 ![image](https://user-images.githubusercontent.com/24555370/145457801-0c83251d-5149-47b7-818d-c9a6c2f8f31d.png)
 
+## Windows Kiosk 
+
+Windows supports many different environment variables that can act as shortcuts to different locations on the system. As a result, kiosk developers sometimes forget about or disregard them when creating input restrictions.
+
+A few other useful environment variables include
+```
+| Enviroment variable       | Location  
+| %ALLUSERSPROFILE%         | C:\Documents and Settings\All Users
+| %APPDATA%                 | C:\Documents and Settings\Username\Application Data
+| %COMMONPROGRAMFILES%      | C:\Program Files\Common Files
+| %COMMONPROGRAMFILES(x86)% | C:\Program Files (x86)\Common Files
+| %COMSPEC%                 |C:\Windows\System32\cmd.exe
+| %HOMEDRIVE%               | C:\
+| %HOMEPATH%                | C:\Documents and Settings\Username
+| %PROGRAMFILES%            | C:\Program Files
+| %PROGRAMFILES(X86)%       | C:\Program Files (x86) (only in 64-bit version)
+| %SystemDrive%             | C:\
+| %SystemRoot%              | C:\Windows
+| %TEMP% and %TMP%          | C:\Documents and Settings\Username\Local Settings\Temp
+| %USERPROFILE%             | C:\Documents and Settings\Username
+| %WINDIR%                  | C:\Windows
+```
