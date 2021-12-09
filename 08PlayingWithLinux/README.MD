@@ -210,7 +210,7 @@ geteuid() = 1000
 getenv("POSIXLY_CORRECT") = nil
 ```
 
-- 2.Write[preloadshellcode.c]() to define custom geteuid and inject our shell code, compile c code. Set the LD_PRELOAD env. 
+- 2.Write [preloadshellcode.c](/08PlayingWithLinux/preloadshell.c) to define custom geteuid and inject our shell code, compile c code. Set the LD_PRELOAD env. 
 
 ```
 offsec@linuxvictim:~$ gcc -Wall -fPIC -z execstack -c -o evil_geteuid.o preloadshellcode.c
