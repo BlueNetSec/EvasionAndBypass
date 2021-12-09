@@ -61,3 +61,4 @@ A few other useful environment variables include
 | %USERPROFILE%             | C:\Documents and Settings\Username
 | %WINDIR%                  | C:\Windows
 ```
+- If restricted from accessing **C:\Windows\System32**, We could try **\\127.0.0.1\C$\Windows\System32\**
