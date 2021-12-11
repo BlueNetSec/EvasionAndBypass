@@ -1,4 +1,4 @@
-##RDP
+## RDP
 
 RDP is a multichannel network protocol developed by Microsoft and is used for communication
 between Terminal Servers and their clients. When an RDP connection is created, the NTLM hashes will reside in memory for the duration of
