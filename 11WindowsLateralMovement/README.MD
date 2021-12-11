@@ -124,3 +124,10 @@ The hooks in this tool will execute code that copies the username, password, and
 Finally, RdpThief allows the original code execution to continue as intended.
 
 We can create a c# script, [rdpinject.cs](/11WindowsLateralMovement/rdpinject.cs) to search all the mstsc,rdp process, then inject Rdpthief.dll into the code, execute our code ,get password/username and resume program execution. 
+
+## Fileless Lateral Movement in C#
+
+First, our code must authenticate to the target host. Following that, it must execute the desired code. Authentication to the DCE/RPC interface and the service control manager is handled by the unmanaged OpenSCManagerW API. The API is executed in the context of the access token of the executing thread. If authentication is successful, a handle is returned that is used to interact with the service control manager. We will then use the OpenService API to open an existing service and invoke ChangeServiceConfigA to change the binary that the service executes. Once the service binary has been updated, we will issue a call to StartServiceA, which will execute the service
+binary and give us code execution on the remote machine.
+The completed code is here [filelessdrop.cs](/11WindowsLateralMovement/filelessdrop.cs), the code is of pof to kick off a notepad, but you can modify it to run your shell.
+You should also look into [SCShell.py](https://github.com/Mr-Un1k0d3r/SCShell)
