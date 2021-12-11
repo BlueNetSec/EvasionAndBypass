@@ -54,3 +54,5 @@ the linuxvictim user without a password
 ```
 kali@kali:~$ ssh -i /id_rsa linuxvictim@linuxvictim
 ```
+
+page 533
