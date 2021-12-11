@@ -77,4 +77,15 @@ we will obtain a SYSTEM token that we can impersonate.
 
 A pipe is a section of shared memory inside the kernel that processes can use for communication. One process can create a pipe (the pipe server) while other processes can
 connect to the pipe (pipe clients) and read/write information from/to it, depending on the permission.
-page 482
+
+we can use the [SpoolSample](https://github.com/leechristensen/SpoolSample) C# implementation written by Lee Christensen to call MS-RPRN APIs. And run our PrintSpooferNet.cs 
+code to catch the pie connection.
+
+start the connection
+```
+C:\user> SpoolSample.exe targetserverName targetserver/pipe/test
+```
+wait for connection and and steal system token to open cmd
+```
+C:\user> PrintSpooferNet.exe \\.\pipe\test\pipe\spoolss
+```
