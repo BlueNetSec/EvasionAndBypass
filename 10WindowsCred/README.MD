@@ -70,7 +70,7 @@ creates the consent prompt.
 Privileges are also included in the access token. if the present privileges are enabled or disabled and may be
 dynamically updated through the Win32 AdjustTokenPrivileges API. For example, a user has SeShutdownPrivilege disabled, if the user oose to shut down the computer through the shutdown command the back-end code will enable the privilege with AdjustTokenPrivileges and then perform the required actions to power off the operating system. We can add/update accounts's permission/token though **secpol.msc**.
 
-There are many different token privilege escalation ttp discussed in this [blog](https://foxglovesecurity.com/2017/08/25/abusing-token-privileges-for-windows-local-privilege-escalation/). We create a c# code [PrintSpooferNet]() that allow us to escalate permission to system account when the current user has SeImpersonatePrivilege.
+There are many different token privilege escalation ttp discussed in this [blog](https://foxglovesecurity.com/2017/08/25/abusing-token-privileges-for-windows-local-privilege-escalation/). We create a c# code [PrintSpooferNet](/10WindowsCred/PrintSpofferNet.cs) that allow us to escalate permission to system account when the current user has SeImpersonatePrivilege.
 
 Our PrintSpooferNet code use [PrintSpoofer attack](https://itm4n.github.io/printspoofer-abusing-impersonate-privileges/) that relies on windows pipes. The attack is based on the fact that the print spooler monitors printer object changes and sends change notifications to print clients by connecting to their respective named pipes. If we can create a process running with the SeImpersonatePrivilege privilege that simulates a print client,
 we will obtain a SYSTEM token that we can impersonate.
