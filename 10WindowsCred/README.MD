@@ -180,3 +180,6 @@ Session : RemoteInteractive from 1
 User Name : admin
 ```
 
+#### C# code to dump the lsass
+
+We can write our own application [minidump.cs](/10WindowsCred/minidump.cs) in C# to memory dump lsass.
