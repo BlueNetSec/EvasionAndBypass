@@ -32,16 +32,19 @@ namespace linkenum
             //check if we can run query tho link
             SqlCommand command = new SqlCommand(execCmd, con);
             SqlDataReader reader = command.ExecuteReader();
+            reader.Read();
             Console.WriteLine("Linked SQL server version: " + reader[0]);
             reader.Close();
 
             //print security context at local database when execute using link
             command = new SqlCommand(localCmd, con);
+            reader = command.ExecuteReader();
             reader.Read();
             Console.WriteLine("Executing as the login " + reader[0] + "on APPSRV01");
 
             //print security context at DC1 when execute using link
             command = new SqlCommand(remoteCmd, con);
+            reader = command.ExecuteReader();
             reader.Read();
             Console.WriteLine("Executing as the login " + reader[0] + "on DC01");
 
