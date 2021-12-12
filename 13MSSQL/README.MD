@@ -127,3 +127,15 @@ If a database has TRUSTWORTHY property set, it’s possible to use the CREATE AS
 - 2.We can compiled the cs into dll and convert it to a hex string [toHex.ps1](/13MSSQL/toHex.ps1). The hex string can be embbeded inside the  create assembly statement for later use.
 - 3.Create the c# code that query the sql remotely. [AssemblyLoad.cs](/13MSSQL/AssemblyLoad.cs), complied and run
 - 4.Lastly, you can't call create assembly multipule times, you must remove it with [cleanup.cs](/13MSSQL/cleanup.cs)
+
+#### SQL Link
+
+When a link from one SQL server to another is created, the administrator must specify the
+execution context that will be used during the connection. If the administrator chooses a specific SQL login and that login has sysadmin role membership,
+we would obtain sysadmin privileges on the linked SQL server. This will be the case even if we
+only have low privileged access on the original SQL server.
+
+- 1.We need to enumerate servers linked to the current SQL server with [linkenum.cs](/13MSSQL/linkenum.cs). We can use sp_linkedservesr stored procedure returns a list of linked servers for us.
+- 2.Check if possible to run command across the link using OPENQUERY, and check the security context. [checklink.cs](/13MSSQL/linkcheck.cs)
+- 3.If you have sa permission over the link database, you could  execute PowerShell shellcode runner through a download cradle with the xp_cmdshell stored
+procedure. [linkshellcode.cs](/13MSSQL/linkshellcode.cs)
