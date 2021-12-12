@@ -149,3 +149,5 @@ follow the link from A to B to obtain the SA login security context, and then re
 EXEC ('sp_linkedservers') AT remotehostname(ex DC01)
 ```
 - 2.query the permission from local host to remote host and return link using [linktolinkandbackquery.cs](/13MSSQL/linktolinkandbackquery.cs) to verify permission.
+- 3.once verify the sa permission, we can now execute command on the remote host, and tell the remote host to exeute command on local host. [linktolinkbackshellcode.cs](13MSSQL/linktolinkbackshellcode.cs)
+ 
