@@ -85,4 +85,5 @@ b ON a.grantor_principal_id = b.principal_id WHERE a.permission_name = 'IMPERSON
 ```
 Putting in it a c# script, we have [enumimpernoate.cs](/13MSSQL/enumImpernoate.cs)
 
-after running the code, i identify that the sa login allow impersonation, we will try to impersonate the sa login
+after running the code, i identify that the sa login allow impersonation, we will try to impersonate the sa login with EXECUTE AS LOGIN = sa. so we have [ImpersonateSA.cs](/13MSSQL/ImpernoateSA.cs)
+
