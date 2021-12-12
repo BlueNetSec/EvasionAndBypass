@@ -119,3 +119,9 @@ sp_OAMethod objecttoken , methodname
 [ , [ @parametername = ] parameter [ OUTPUT ] [ ...n ] ]
 ```
 The example source code, [soOAMethod.cs](/13MSSQL/spOAMethod.cs) which create a file in remote host. 
+
+#### Custom Assemblies
+If a database has TRUSTWORTHY property set, it’s possible to use the CREATE ASSEMBLY924 statement to import a managed DLL as an object inside the SQL server and execute methods within it.
+
+- 1.We will first create a Class Library, [cmdExec](/13MSSQL/cmdExec.cs) in .NET for cmd execution
+- 2.We can compiled the cs into dll and convert it to a hex string [toHex.ps1](/13MSSQL/toHex.ps1). The hex string can be embbeded inside the  create assembly statement for later use.
