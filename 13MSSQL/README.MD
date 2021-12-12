@@ -87,3 +87,9 @@ Putting in it a c# script, we have [enumimpernoate.cs](/13MSSQL/enumImpernoate.c
 
 after running the code, i identify that the sa login allow impersonation, we will try to impersonate the sa login with EXECUTE AS LOGIN = sa. so we have [ImpersonateSA.cs](/13MSSQL/ImpernoateSA.cs)
 
+However, a database user can only perform actions on a given database. This means that
+impersonation of a user with sysadmin role membership in a database does not necessarily lead
+to server-wide sysadmin role membership. To fully compromise the database server, the database user we impersonate must be in a
+database that has the **TRUSTWORTHY** property set.
+
+The only native database with the TRUSTWORTHY property enabled is **msdb**. As is the case with many databases, the database owner (dbo) user has the sysadmin role.
