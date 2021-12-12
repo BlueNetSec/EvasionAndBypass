@@ -139,3 +139,13 @@ only have low privileged access on the original SQL server.
 - 2.Check if possible to run command across the link using OPENQUERY, and check the security context. [checklink.cs](/13MSSQL/linkcheck.cs)
 - 3.If you have sa permission over the link database, you could  execute PowerShell shellcode runner through a download cradle with the xp_cmdshell stored
 procedure. [linkshellcode.cs](/13MSSQL/linkshellcode.cs)
+
+#### why there are so many links??
+The SQL server on A has a link to the SQL server on B. This means that we could
+follow the link from A to B to obtain the SA login security context, and then return back over the link from B to A.
+
+- 1.enumenate the link on the remote host with 
+```
+EXEC ('sp_linkedservers') AT remotehostname(ex DC01)
+```
+- 2.query the permission from local host to remote host and return link using [linktolinkandbackquery.cs](/13MSSQL/linktolinkandbackquery.cs) to verify permission.
