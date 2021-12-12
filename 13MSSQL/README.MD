@@ -92,4 +92,4 @@ impersonation of a user with sysadmin role membership in a database does not nec
 to server-wide sysadmin role membership. To fully compromise the database server, the database user we impersonate must be in a
 database that has the **TRUSTWORTHY** property set.
 
-The only native database with the TRUSTWORTHY property enabled is **msdb**. As is the case with many databases, the database owner (dbo) user has the sysadmin role.
+The only native database with the TRUSTWORTHY property enabled is **msdb**. As is the case with many databases, the database owner (dbo) user has the sysadmin role. we can update our ImpersonateSA c# script to [impersonateDBO.cs](/13MSSQL/ImpersonateDBO.cs )
