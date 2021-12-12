@@ -93,3 +93,29 @@ to server-wide sysadmin role membership. To fully compromise the database server
 database that has the **TRUSTWORTHY** property set.
 
 The only native database with the TRUSTWORTHY property enabled is **msdb**. As is the case with many databases, the database owner (dbo) user has the sysadmin role. we can update our ImpersonateSA c# script to [impersonateDBO.cs](/13MSSQL/ImpersonateDBO.cs )
+
+#### Remote code execution with xp_cmdshell
+
+The xp_cmdshell stored procedure spawns a Windows command shell and passes in a string that
+is then executed. The output of the command is returned by the procedure. To do this, we’ll need to begin with the impersonation of the
+sa login. After this, we’ll use the sp_configure stored procedure to activate the advanced options
+and then enable xp_cmdshell. The full implementation is in [xpcmdshell.cs](/13MSSQL/xpcmdshell.cs)
+
+#### Remote code execution with sp_OACreate and sp_OAMethod
+
+We can also use the sp_OACreate and sp_OAMethod stored procedures to create and execute a new stored procedure based on [Object Linking and
+Embedding](https://en.wikipedia.org/wiki/Object_Linking_and_Embedding)
+
+SQL statement to create local variable and instantiate the OLE object.
+```
+DECLARE @myshell INT; EXEC sp_oacreate 'wscript.shell', @myshell OUTPUT;
+```
+
+
+sp_OAMethod prototype, take the name of the procedure(objecttoken), method of the OLE(methodname)->run, optional output variable,and parameters for the invoked method
+```
+sp_OAMethod objecttoken , methodname
+[ , returnvalue OUTPUT ]
+[ , [ @parametername = ] parameter [ OUTPUT ] [ ...n ] ]
+```
+The example source code, [soOAMethod.cs](/13MSSQL/spOAMethod.cs) which create a file in remote host. 
