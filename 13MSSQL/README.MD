@@ -125,3 +125,5 @@ If a database has TRUSTWORTHY property set, it’s possible to use the CREATE AS
 
 - 1.We will first create a Class Library, [cmdExec](/13MSSQL/cmdExec.cs) in .NET for cmd execution
 - 2.We can compiled the cs into dll and convert it to a hex string [toHex.ps1](/13MSSQL/toHex.ps1). The hex string can be embbeded inside the  create assembly statement for later use.
+- 3.Create the c# code that query the sql remotely. [AssemblyLoad.cs](/13MSSQL/AssemblyLoad.cs), complied and run
+- 4.Lastly, you can't call create assembly multipule times, you must remove it with [cleanup.cs](/13MSSQL/cleanup.cs)
