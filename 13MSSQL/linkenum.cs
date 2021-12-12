@@ -7,7 +7,7 @@ namespace linkenum
     {
         static void Main(string[] args)
         {
-            String sqlServer = "dc01.corp1.com";
+            String sqlServer = "appsrv01.corp1.com";
 
             //The default database in MS SQL is called “master”
             String database = "master";
