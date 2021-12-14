@@ -94,7 +94,8 @@ Frida is a opensource tool allow us to hook a process and watch Win32APi through
 - 1.Start a 64 bit powershell process and get the process ID ```Get-Process -Name powershell```
 - 2.Open command prompt, and run ```frida-trace -p powershellPID -x amsi.dll -i Amsi* ``` 
 - 3.modify the defult javascript output format, so what can get input/output values. In our case, we want to know what is going on with AmsiScanBuffer located at **C:\Users\\mst\__handlers__\amsi.dll\AmsiScanBuffer.js** [AmsiScanBuffer.js](/05FightAdvancedAntivirus/AmsiScanBuffer.js)
-- 4.Now you can interact with powershll process and watch the API calls.
+- 4.Now you can interact with powershell process and watch the API calls.
+- 5.try command Amsiutils to see what happend
 
 ## Bypass AMSI in Powershell
 #### Destory amsiContext header
