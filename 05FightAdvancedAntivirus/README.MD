@@ -247,7 +247,7 @@ PS C:\Users\mst> New-ItemProperty -Path HKCU:\Software\Classes\mssettings\shell\
 PS C:\Users\Offsec> C:\Windows\System32\fodhelper.exe
 ```
 
-## AMSI bypass witj JScript
+## AMSI bypass with JScript
 
 We  create a Jscript test file with sleep enable.This allow us time to locate and attach the Wscript process before the script finish execution. 
 ```
