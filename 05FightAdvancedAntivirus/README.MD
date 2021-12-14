@@ -172,7 +172,7 @@ We could reuse the dynamic discovery of types and fields from our amsiContext AM
 
 **TODO.Create the bypass TTP script using dynamic discovery type.**
 
-#### Attack AmsiOpenSession binary patching
+#### Attack AmsiOpenSession binary patching 'amsiutils'
 We want to modify the assembly instructions themselve for this attack instead of the field data. We will target **AmsiOpenSession** funtion.
 
 - First we need to understand the AmsiOpenSession assembly flow by dumping content of AmsiOpenSession
