@@ -160,6 +160,16 @@ amsi!AmsiOpenSession:
 ![image](https://user-images.githubusercontent.com/24555370/144694463-24e66adb-4afc-4867-948d-094dd8f74e3f.png)
 
 - 7.The method works, now we need to create a [BeatUpamsiContextHeader.ps1](/05FightAdvancedAntivirus/BeatUpHeader.ps1) to automate this process for us.. FYI the official name for this kind of attack is BeatUpamsiContextHeader powershell reflection ttps.
+- 8.we can verify the address with winDng,attach to the PowerShell_ISE process and quickly
+translate the address to hexadecimal with the ? command, prepending the address with 0n
+```
+0:001> ? 0n140736475571392
+```
+- 9.With the value converted, we can then unassemble the instructions at that address to check if it is
+correct:
+```
+001> u 7fff`c3a224c0
+```
 
 #### Attack AmsiInitialize fcuntion
 Recall amsiContext? In the pervious TTPs, We destory the amsiContext header to bypass AMSI. This context structure is created by AmsiInitialize function.
