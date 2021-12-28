@@ -6,6 +6,13 @@
 set AutoRunScript "migrate -n explorer.exe"
 ```
 
+## msf encoder
+
+```
+set enablestageencoding true
+set stageencoder x86/xor_dynamic
+```
+
 ### Ch1 Notes
 
 1. Identify the web port on 192.168.49.121  allowing file upload. Upload a doc file which allow which allow [ping marco](/msf/ping.vba) command to verify the target allowing code execution though marco 
