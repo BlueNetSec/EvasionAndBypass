@@ -3,7 +3,7 @@
 #### Auto Run Script
 
 ```
-set AutoRunScript "migrate -n explorer.exe"
+set AutoRunScript migrate -n explorer.exe
 ```
 
 ## msf encoder
