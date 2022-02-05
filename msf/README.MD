@@ -98,3 +98,7 @@ run -j
 ####Get into 192.168.141.122 machine, hostname: client
 
 Domain Admins: Administrator and pete
+
+scaning#
+
+sudo nmap -A -Pn 192.168.120.130-132
